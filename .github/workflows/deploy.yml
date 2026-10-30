@@ -28,6 +28,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Debug — confirm job starts
+        run: echo "Deploy job started at $(date)"
+
       - uses: actions/checkout@v4
 
       - name: Authenticate to Google Cloud
