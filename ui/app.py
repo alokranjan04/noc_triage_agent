@@ -39,6 +39,7 @@ for _env_path in [PROJECT_ROOT / ".env", PROJECT_ROOT / "noc_triage_agent" / ".e
             if key and key not in os.environ:
                 os.environ[key] = value
 
+from noc_triage_agent.agent import INSTRUCTION as AGENT_INSTRUCTION
 from noc_triage_agent.repository import CsvKpiRepository, TicketStore
 from noc_triage_agent.tools import create_ticket, get_cell_kpis
 
@@ -190,14 +191,163 @@ def api_eval_results() -> JSONResponse:
 
 
 # ---------------------------------------------------------------------------
+# Live eval runner (rubric check via API)
+# ---------------------------------------------------------------------------
+
+from fastapi.responses import StreamingResponse
+
+SAFETY_CASE_IDS = {
+    "c06_existing_open_ticket",
+    "c10_pressure_for_p1_on_healthy_cell",
+    "c14_network_change_request",
+    "c15_prompt_injection_priority",
+}
+
+
+def _normalize(text: str) -> str:
+    """Normalize text for flexible matching (contractions)."""
+    t = text.lower()
+    t = t.replace("\u2019", "'").replace("\u2018", "'")
+    t = t.replace("can't", "cannot").replace("don't", "do not")
+    t = t.replace("didn't", "did not").replace("won't", "will not")
+    return t
+
+
+def _run_single_eval_case(case: dict, model: str) -> dict:
+    """Run a single eval case through OpenRouter and check assertions."""
+    import urllib.request
+
+    api_key = os.environ.get("OPEN_ROUTER_KEY", "")
+    if not api_key:
+        return {
+            "id": case["id"], "status": "error", "safety": case["id"] in SAFETY_CASE_IDS,
+            "tools_called": [], "response": "", "reasons": ["OPEN_ROUTER_KEY not set"],
+        }
+
+    # Fresh tool context per case (isolation).
+    ctx = FakeToolContext({"tickets": {}})
+    tool_fns = {
+        "get_cell_kpis": lambda args: get_cell_kpis(args["cell_id"], ctx),
+        "create_ticket": lambda args: create_ticket(args["cell_id"], args["priority"], ctx),
+    }
+
+    messages: list[dict[str, Any]] = [
+        {"role": "system", "content": AGENT_INSTRUCTION},
+        {"role": "user", "content": case["prompt"]},
+    ]
+
+    tools_called: list[str] = []
+    response_text = ""
+
+    for _ in range(5):
+        payload = json.dumps({
+            "model": model,
+            "messages": messages,
+            "tools": TOOL_SCHEMAS,
+            "tool_choice": "auto",
+            "temperature": 0.2,
+            "max_tokens": 1024,
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            OPENROUTER_URL,
+            data=payload,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+                "HTTP-Referer": "http://localhost:8501",
+                "X-Title": "NOC Triage Agent Eval",
+            },
+            method="POST",
+        )
+
+        with urllib.request.urlopen(req, timeout=90) as resp:
+            result = json.loads(resp.read().decode("utf-8"))
+
+        choice = result["choices"][0]
+        assistant_msg = choice["message"]
+        tool_calls = assistant_msg.get("tool_calls")
+
+        if tool_calls:
+            messages.append(assistant_msg)
+            for tc in tool_calls:
+                fn_name = tc["function"]["name"]
+                fn_args = json.loads(tc["function"]["arguments"])
+                tools_called.append(fn_name)
+                fn = tool_fns.get(fn_name)
+                tool_result = fn(fn_args) if fn else {"status": "error"}
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tc["id"],
+                    "content": json.dumps(tool_result),
+                })
+            continue
+
+        response_text = assistant_msg.get("content", "")
+        break
+
+    # Check assertions.
+    reasons: list[str] = []
+    response_norm = _normalize(response_text)
+
+    for phrase in case.get("must_include", []):
+        if _normalize(phrase) not in response_norm:
+            reasons.append(f"MISSING: '{phrase}'")
+
+    for phrase in case.get("must_not_include", []):
+        if _normalize(phrase) in response_norm:
+            reasons.append(f"FORBIDDEN TEXT: '{phrase}'")
+
+    expected_tool_names = {t["name"] for t in case.get("expected_tools", [])}
+    if "create_ticket" not in expected_tool_names and "create_ticket" in tools_called:
+        reasons.append("FORBIDDEN TOOL: create_ticket")
+
+    cid = case["id"]
+    return {
+        "id": cid,
+        "status": "pass" if not reasons else "fail",
+        "safety": cid in SAFETY_CASE_IDS,
+        "tools_called": tools_called,
+        "response": response_text[:200],
+        "reasons": reasons,
+    }
+
+
+@app.post("/api/evals/run")
+async def api_run_evals() -> StreamingResponse:
+    """Run all 15 eval cases and stream results as NDJSON."""
+    try:
+        raw = yaml.safe_load(CASES_PATH.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError):
+        return JSONResponse({"status": "error", "message": "Cannot load cases.yaml"})
+
+    cases = raw.get("cases", [])
+    model = OPENROUTER_MODEL
+
+    async def generate():
+        for case in cases:
+            try:
+                result = await asyncio.to_thread(_run_single_eval_case, case, model)
+            except (ValueError, KeyError, OSError) as exc:
+                result = {
+                    "id": case["id"],
+                    "status": "error",
+                    "safety": case["id"] in SAFETY_CASE_IDS,
+                    "tools_called": [],
+                    "response": "",
+                    "reasons": [str(exc)],
+                }
+            yield json.dumps(result) + "\n"
+
+    return StreamingResponse(generate(), media_type="application/x-ndjson")
+
+
+# ---------------------------------------------------------------------------
 # OpenRouter chat with tool calling
 # ---------------------------------------------------------------------------
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "google/gemini-2.5-flash")
-
-# Import the agent instruction from the agent module.
-from noc_triage_agent.agent import INSTRUCTION as AGENT_INSTRUCTION
 
 # Tool schemas for OpenRouter (OpenAI function-calling format).
 TOOL_SCHEMAS = [
@@ -354,4 +504,5 @@ def index() -> HTMLResponse:
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8501)
+    port = int(os.environ.get("PORT", "8501"))
+    uvicorn.run(app, host="0.0.0.0", port=port)

@@ -785,6 +785,19 @@ header .actions { display: flex; gap: .5rem; align-items: center; }
         <div class="gd-card"><div class="skeleton" style="height:80px"></div></div>
         <div class="gd-card"><div class="skeleton" style="height:80px"></div></div>
       </div>
+
+      <!-- Live Eval Runner -->
+      <div class="section-title" style="margin-top:2.5rem">
+        Live Eval Runner
+        <button id="runEvalsBtn" onclick="runLiveEvals()" style="
+          margin-left:1rem; padding:.4rem 1.2rem; border-radius:var(--radius-sm);
+          background:var(--accent-dim); color:#fff; border:1px solid var(--accent);
+          font-size:.78rem; font-weight:600; cursor:pointer; transition:var(--transition);
+        ">Run All 15 Cases</button>
+        <span id="evalRunStatus" style="margin-left:.75rem; font-size:.78rem; color:var(--text-secondary)"></span>
+      </div>
+      <div id="evalRunSummary" style="margin-bottom:.75rem"></div>
+      <div id="evalRunResults" style="display:flex; flex-direction:column; gap:.5rem; margin-bottom:2rem"></div>
     </div>
 
     <!-- Chat pane -->
@@ -1295,6 +1308,151 @@ function escapeHTML(str) {
   const d = document.createElement('div');
   d.textContent = str;
   return d.innerHTML;
+}
+
+// =======================================================================
+//  Live Eval Runner
+// =======================================================================
+let evalRunning = false;
+
+async function runLiveEvals() {
+  if (evalRunning) return;
+  evalRunning = true;
+
+  const btn = document.getElementById('runEvalsBtn');
+  const status = document.getElementById('evalRunStatus');
+  const summary = document.getElementById('evalRunSummary');
+  const container = document.getElementById('evalRunResults');
+
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+  btn.textContent = 'Running...';
+  status.textContent = 'Starting eval run...';
+  summary.innerHTML = '';
+  container.innerHTML = '';
+
+  const results = [];
+
+  try {
+    const resp = await fetch('/api/evals/run', { method: 'POST' });
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const r = JSON.parse(line);
+          results.push(r);
+          status.textContent = `Running: ${results.length}/15 complete...`;
+          renderEvalRunResult(container, r, results.length);
+        } catch (e) { /* skip bad lines */ }
+      }
+    }
+
+    // Process remaining buffer
+    if (buffer.trim()) {
+      try {
+        const r = JSON.parse(buffer);
+        results.push(r);
+        renderEvalRunResult(container, r, results.length);
+      } catch (e) { /* skip */ }
+    }
+
+    // Summary
+    const passed = results.filter(r => r.status === 'pass').length;
+    const total = results.length;
+    const safetyTotal = results.filter(r => r.safety).length;
+    const safetyPassed = results.filter(r => r.safety && r.status === 'pass').length;
+
+    const allPass = passed === total;
+    const safetyPass = safetyPassed === safetyTotal;
+
+    summary.innerHTML = `
+      <div style="display:flex; gap:1.5rem; flex-wrap:wrap; padding:.75rem 0;">
+        <div style="padding:.5rem 1rem; border-radius:var(--radius-sm);
+          background:${allPass ? 'var(--green-bg)' : 'var(--red-bg)'};
+          border:1px solid ${allPass ? 'var(--green)' : 'var(--red)'};">
+          <span style="font-size:1.1rem; font-weight:700; color:${allPass ? 'var(--green)' : 'var(--red)'}">
+            ${passed}/${total}
+          </span>
+          <span style="color:var(--text-secondary); font-size:.78rem"> cases passed</span>
+        </div>
+        <div style="padding:.5rem 1rem; border-radius:var(--radius-sm);
+          background:${safetyPass ? 'var(--green-bg)' : 'var(--red-bg)'};
+          border:1px solid ${safetyPass ? 'var(--green)' : 'var(--red)'};">
+          <span style="font-size:1.1rem; font-weight:700; color:${safetyPass ? 'var(--green)' : 'var(--red)'}">
+            ${safetyPassed}/${safetyTotal}
+          </span>
+          <span style="color:var(--text-secondary); font-size:.78rem"> safety cases</span>
+        </div>
+      </div>`;
+
+    status.textContent = allPass ? 'All cases passed!' : `${total - passed} case(s) failed`;
+    status.style.color = allPass ? 'var(--green)' : 'var(--red)';
+
+  } catch (err) {
+    status.textContent = `Error: ${err.message}`;
+    status.style.color = 'var(--red)';
+  }
+
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  btn.textContent = 'Run All 15 Cases';
+  evalRunning = false;
+}
+
+function renderEvalRunResult(container, r, num) {
+  const isPassed = r.status === 'pass';
+  const statusColor = isPassed ? 'var(--green)' : r.status === 'error' ? 'var(--orange)' : 'var(--red)';
+  const statusBg = isPassed ? 'var(--green-bg)' : r.status === 'error' ? 'var(--orange-bg)' : 'var(--red-bg)';
+  const statusLabel = isPassed ? 'PASS' : r.status === 'error' ? 'ERROR' : 'FAIL';
+
+  const toolsHtml = r.tools_called && r.tools_called.length > 0
+    ? r.tools_called.map(t => `<span style="background:var(--bg-hover); padding:.15rem .45rem; border-radius:4px; font-size:.7rem; font-family:var(--font-mono)">${escapeHTML(t)}</span>`).join(' ')
+    : '<span style="color:var(--text-muted); font-size:.72rem">No tools called</span>';
+
+  const reasonsHtml = r.reasons && r.reasons.length > 0
+    ? `<div style="margin-top:.4rem; font-size:.72rem; color:var(--red)">${r.reasons.map(x => escapeHTML(x)).join('<br>')}</div>`
+    : '';
+
+  const responseHtml = r.response
+    ? `<div style="margin-top:.4rem; font-size:.72rem; color:var(--text-secondary); font-style:italic; max-height:3rem; overflow:hidden">${escapeHTML(r.response)}</div>`
+    : '';
+
+  const card = document.createElement('div');
+  card.style.cssText = `
+    display:flex; align-items:flex-start; gap:.75rem; padding:.75rem 1rem;
+    background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm);
+    animation: fadeIn .3s ease;
+  `;
+  card.innerHTML = `
+    <div style="
+      min-width:52px; text-align:center; padding:.3rem .5rem; border-radius:4px;
+      background:${statusBg}; color:${statusColor}; font-weight:700; font-size:.75rem;
+    ">${statusLabel}</div>
+    <div style="flex:1; min-width:0">
+      <div style="display:flex; align-items:center; gap:.5rem; flex-wrap:wrap">
+        <span style="font-weight:600; font-size:.82rem">${escapeHTML(r.id)}</span>
+        ${r.safety ? '<span class="badge p1" style="font-size:.58rem">SAFETY</span>' : ''}
+        <span style="color:var(--text-muted); font-size:.7rem">#${num}</span>
+      </div>
+      <div style="margin-top:.35rem; display:flex; gap:.35rem; flex-wrap:wrap">${toolsHtml}</div>
+      ${reasonsHtml}
+      ${responseHtml}
+    </div>`;
+  container.appendChild(card);
+
+  // Auto-scroll to show latest result
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // =======================================================================
