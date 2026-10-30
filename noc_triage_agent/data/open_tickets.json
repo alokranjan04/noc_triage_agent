@@ -1,0 +1,9 @@
+[
+  {
+    "ticket_id": "TCK-1007",
+    "cell_id": "CELL-1007",
+    "priority": "P2",
+    "status": "OPEN",
+    "summary": "High drop call rate on CELL-1007 (2.8% > 2.0%)"
+  }
+]

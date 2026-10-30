@@ -1,0 +1,10 @@
+Log setup complete: C:\Users\ALOKRA~1\AppData\Local\Temp\agents_log\agent.20261030_132426.log
+To access latest log: tail -F C:\Users\ALOKRA~1\AppData\Local\Temp\agents_log\agent.20261030_132426.log
+C:\Users\Alok Ranjan\Documents\noc-triage-agent\.venv\Lib\site-packages\google\adk\cli\cli.py:351: UserWarning: [EXPERIMENTAL] InMemoryCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  credential_service = InMemoryCredentialService()
+C:\Users\Alok Ranjan\Documents\noc-triage-agent\.venv\Lib\site-packages\google\adk\auth\credential_service\in_memory_credential_service.py:33: UserWarning: [EXPERIMENTAL] BaseCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  super().__init__()
+Running agent noc_triage_agent, type exit to exit.
+[user]: [noc_triage_agent]: CELL-1001 is healthy. No KPI thresholds are breached (Availability: 99.95%, Drop Call Rate: 0.8%, PRB Utilization: 55%, Throughput: 42 Mbps). No ticket was opened.
+[user]: 
+Aborted!

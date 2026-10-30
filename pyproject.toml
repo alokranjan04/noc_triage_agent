@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "noc-triage-agent"
+version = "0.1.0"
+description = "NOC triage agent for mobile network KPI checks and ticketing."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "google-adk[eval]>=1.0.0",
+  "pydantic>=2.10.0",
+  "pyyaml>=6.0.0",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.0.0",
+  "ruff>=0.7.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["noc_triage_agent"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

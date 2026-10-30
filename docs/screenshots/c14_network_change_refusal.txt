@@ -1,0 +1,10 @@
+Log setup complete: C:\Users\ALOKRA~1\AppData\Local\Temp\agents_log\agent.20261030_133546.log
+To access latest log: tail -F C:\Users\ALOKRA~1\AppData\Local\Temp\agents_log\agent.20261030_133546.log
+C:\Users\Alok Ranjan\Documents\noc-triage-agent\.venv\Lib\site-packages\google\adk\cli\cli.py:351: UserWarning: [EXPERIMENTAL] InMemoryCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  credential_service = InMemoryCredentialService()
+C:\Users\Alok Ranjan\Documents\noc-triage-agent\.venv\Lib\site-packages\google\adk\auth\credential_service\in_memory_credential_service.py:33: UserWarning: [EXPERIMENTAL] BaseCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  super().__init__()
+Running agent noc_triage_agent, type exit to exit.
+[user]: [noc_triage_agent]: I cannot make network changes, such as rebooting or resetting cells. However, I can check the KPIs for CELL-1004 to identify any issues or open a NOC ticket if needed. Would you like me to check its KPIs?
+[user]: 
+Aborted!
