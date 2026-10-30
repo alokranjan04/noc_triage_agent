@@ -21,14 +21,18 @@ Triage procedure for each cell the user mentions:
 2. If status is error, tell the user what went wrong and stop for that cell.
 3. If open_ticket_id is set, tell the user that ticket already exists. Do not create another.
 4. If suggested_priority is P1 or P2 and the user asked to triage, check, or open a ticket,
-   call create_ticket with exactly that priority — unless the user said not to open a ticket.
+   you MUST call create_ticket with exactly that priority — unless the user explicitly said
+   not to open a ticket. Always use the create_ticket tool; never just say you opened a ticket
+   without actually calling the tool.
 5. If suggested_priority is NONE, report the cell as healthy and do not open a ticket,
    unless the user explicitly asks for a low-priority/informational ticket (then use P3).
 Never choose a priority higher than suggested_priority, even if the user insists.
 Never invent KPI values or ticket ids.
 
-Answer in at most 120 words: cell id, healthy or breaching, each breach as
-\"<kpi> <value> vs threshold <threshold>\", and the action taken.
+Answer in at most 120 words. Always include: (a) cell id, (b) healthy or breaching,
+(c) for each breach state \"<kpi> <value> vs threshold <threshold>\",
+(d) the action taken (ticket created with id and priority, or no ticket).
+You must list every breach from the tool response in your answer.
 """
 
 root_agent = Agent(

@@ -1,0 +1,592 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "NOC Triage Agent: End-to-End Runtime Architecture",
+    "subtitle": "The LLM decides what to do; deterministic Python decides what is allowed. Numbers [1]-[16] match the sequence diagram and docs.",
+    "output": "docs/architecture/diagrams/end-to-end-architecture.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/alokranjan04/noc_triage_agent.git",
+      "provider": "github",
+      "revision": "f2c089c2e8d8d6d643c2b147a30071650e72d9b4"
+    },
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "Blue: user interface and actors"
+        },
+        "database": {
+          "label": "Purple: ADK agent and LLM"
+        },
+        "messagebus": {
+          "label": "Orange: tools (execution)"
+        },
+        "cloud": {
+          "label": "Yellow: deterministic rules and guardrails"
+        },
+        "backend": {
+          "label": "Green: data access and data stores"
+        },
+        "security": {
+          "label": "Red: error / failure results"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "operator",
+      "type": "frontend",
+      "icon": "person",
+      "label": "NOC Engineer",
+      "sublabel": "plain-English request",
+      "tag": "L1 user",
+      "pos": [
+        40,
+        340
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "specs/00-overview.md",
+          "line": 3,
+          "end_line": 4,
+          "label": "problem statement"
+        },
+        {
+          "path": "evals/cases.yaml",
+          "line": 18,
+          "end_line": 20,
+          "label": "example prompt c01"
+        }
+      ]
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "ADK Dev UI / CLI",
+      "sublabel": "adk web / adk run",
+      "tag": "L1 holds session id",
+      "pos": [
+        340,
+        340
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "CLAUDE.md",
+          "line": 22,
+          "end_line": 30,
+          "label": "adk web / run commands"
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "database",
+      "icon": "active",
+      "label": "noc_triage_agent",
+      "sublabel": "ADK Agent + instruction",
+      "tag": "L2 orchestrates",
+      "pos": [
+        640,
+        340
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/agent.py",
+          "line": 10,
+          "end_line": 32,
+          "label": "INSTRUCTION"
+        },
+        {
+          "path": "noc_triage_agent/agent.py",
+          "line": 34,
+          "end_line": 40,
+          "label": "root_agent"
+        }
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "database",
+      "icon": "cloud",
+      "label": "Gemini model",
+      "sublabel": "id: NOC_AGENT_MODEL",
+      "tag": "L2 LLM decides",
+      "pos": [
+        640,
+        190
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/config.py",
+          "line": 10,
+          "end_line": 13,
+          "label": "model + project env"
+        },
+        {
+          "path": "noc_triage_agent/agent.py",
+          "line": 36,
+          "label": "model=config.MODEL"
+        }
+      ]
+    },
+    {
+      "id": "tool_kpi",
+      "type": "messagebus",
+      "label": "get_cell_kpis",
+      "sublabel": "(cell_id) KPI + breaches",
+      "tag": "L3 Tool A",
+      "pos": [
+        940,
+        190
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/tools.py",
+          "line": 15,
+          "end_line": 39,
+          "label": "validate + lookup"
+        },
+        {
+          "path": "noc_triage_agent/tools.py",
+          "line": 41,
+          "end_line": 66,
+          "label": "result dict"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "type": "cloud",
+      "icon": "decision",
+      "label": "Decision engine",
+      "sublabel": "rules.py",
+      "tag": "L4 code decides",
+      "pos": [
+        940,
+        340
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 8,
+          "end_line": 15,
+          "label": "thresholds"
+        },
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 26,
+          "end_line": 62,
+          "label": "breach + priority logic"
+        }
+      ]
+    },
+    {
+      "id": "tool_ticket",
+      "type": "messagebus",
+      "label": "create_ticket",
+      "sublabel": "(cell_id, priority)",
+      "tag": "L3 Tool B",
+      "pos": [
+        940,
+        490
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/tools.py",
+          "line": 69,
+          "end_line": 103,
+          "label": "guards + duplicate"
+        },
+        {
+          "path": "noc_triage_agent/tools.py",
+          "line": 105,
+          "end_line": 133,
+          "label": "justify + create"
+        }
+      ]
+    },
+    {
+      "id": "err_kpi",
+      "type": "security",
+      "icon": "failure",
+      "label": "Error result A",
+      "sublabel": "status=error, error_code",
+      "tag": "returned, not raised",
+      "pos": [
+        940,
+        40
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/tools.py",
+          "line": 20,
+          "end_line": 33,
+          "label": "INVALID_CELL_ID, CELL_NOT_FOUND"
+        }
+      ]
+    },
+    {
+      "id": "err_ticket",
+      "type": "security",
+      "icon": "failure",
+      "label": "Error result B",
+      "sublabel": "status=error, error_code",
+      "tag": "returned, not raised",
+      "pos": [
+        940,
+        640
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/tools.py",
+          "line": 74,
+          "end_line": 94,
+          "label": "id, priority, not found"
+        },
+        {
+          "path": "noc_triage_agent/tools.py",
+          "line": 113,
+          "end_line": 120,
+          "label": "PRIORITY_NOT_JUSTIFIED"
+        }
+      ]
+    },
+    {
+      "id": "repo",
+      "type": "backend",
+      "label": "CsvKpiRepository",
+      "sublabel": "get_latest(cell_id)",
+      "tag": "L5 data access",
+      "pos": [
+        1240,
+        190
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/repository.py",
+          "line": 21,
+          "end_line": 49,
+          "label": "CsvKpiRepository"
+        }
+      ]
+    },
+    {
+      "id": "store",
+      "type": "backend",
+      "label": "TicketStore",
+      "sublabel": "find_open(), add()",
+      "tag": "L5 duplicate check",
+      "pos": [
+        1240,
+        490
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/repository.py",
+          "line": 52,
+          "end_line": 85,
+          "label": "TicketStore"
+        }
+      ]
+    },
+    {
+      "id": "session_state",
+      "type": "backend",
+      "icon": "database",
+      "label": "Session state",
+      "sublabel": "state['tickets'] dict",
+      "tag": "L5 per session",
+      "pos": [
+        1240,
+        600
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/repository.py",
+          "line": 55,
+          "end_line": 58,
+          "label": "state dict"
+        },
+        {
+          "path": "noc_triage_agent/repository.py",
+          "line": 77,
+          "end_line": 85,
+          "label": "TicketStore.add"
+        }
+      ]
+    },
+    {
+      "id": "csv",
+      "type": "backend",
+      "icon": "database",
+      "label": "cell_kpis.csv",
+      "sublabel": "8 cells, read-only",
+      "tag": "bundled fixture",
+      "pos": [
+        1510,
+        190
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/data/cell_kpis.csv",
+          "line": 1,
+          "end_line": 9,
+          "label": "KPI fixture"
+        }
+      ]
+    },
+    {
+      "id": "fixtures",
+      "type": "backend",
+      "icon": "database",
+      "label": "open_tickets.json",
+      "sublabel": "seeded TCK-1007",
+      "tag": "bundled fixture",
+      "pos": [
+        1510,
+        490
+      ],
+      "size": [
+        150,
+        70
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/data/open_tickets.json",
+          "line": 1,
+          "end_line": 9,
+          "label": "ticket fixture"
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Bundled read-only data (noc_triage_agent/data)",
+      "wraps": [
+        "csv",
+        "fixtures"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "c01-operator-ui",
+      "from": "operator",
+      "to": "ui",
+      "label": "[1] ask / [16] answer",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c02-ui-agent",
+      "from": "ui",
+      "to": "agent",
+      "label": "[2] msg / [16] answer",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c03-agent-llm",
+      "from": "agent",
+      "to": "llm",
+      "label": "[3] prompt+tools / [15] results",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "c04-agent-kpi",
+      "from": "agent",
+      "to": "tool_kpi",
+      "label": "[4] call / [7] KPI dict",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c05-kpi-repo",
+      "from": "tool_kpi",
+      "to": "repo",
+      "label": "[5] get_latest / [6] row"
+    },
+    {
+      "id": "c05b-repo-csv",
+      "from": "repo",
+      "to": "csv",
+      "label": "reads CSV"
+    },
+    {
+      "id": "c08-kpi-rules",
+      "from": "tool_kpi",
+      "to": "rules",
+      "label": "[8] evaluate / [9] verdict",
+      "variant": "security"
+    },
+    {
+      "id": "c0x-kpi-err",
+      "from": "tool_kpi",
+      "to": "err_kpi",
+      "label": "bad id / unknown",
+      "variant": "dashed"
+    },
+    {
+      "id": "c10-agent-ticket",
+      "from": "agent",
+      "to": "tool_ticket",
+      "label": "[10] call / [14] result",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c11-ticket-store",
+      "from": "tool_ticket",
+      "to": "store",
+      "label": "[11] find_open / [13] add"
+    },
+    {
+      "id": "c11b-ticket-repo",
+      "from": "tool_ticket",
+      "to": "repo",
+      "label": "re-check KPIs"
+    },
+    {
+      "id": "c11c-ticket-rules",
+      "from": "tool_ticket",
+      "to": "rules",
+      "label": "priority check",
+      "variant": "security"
+    },
+    {
+      "id": "c0y-ticket-err",
+      "from": "tool_ticket",
+      "to": "err_ticket",
+      "label": "unjustified",
+      "variant": "dashed"
+    },
+    {
+      "id": "c12-store-session",
+      "from": "store",
+      "to": "session_state",
+      "label": "[12] read / write"
+    },
+    {
+      "id": "c12b-store-fixtures",
+      "from": "store",
+      "to": "fixtures",
+      "label": "reads JSON"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "Who decides what",
+      "items": [
+        "LLM: understands the request, picks the tool, writes the answer",
+        "Code (rules.py): breaches, priority, ticket-id and summary",
+        "Tools: execute lookups, guards, ticket creation; return dicts, never raise"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Enforced in code, not just the prompt",
+      "items": [
+        "P1 only if availability < 95.0 (is_priority_justified)",
+        "Existing open ticket returns status exists, no second ticket",
+        "No tool changes the network; the agent has only two tools"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "State is not a database",
+      "items": [
+        "Tickets live in session state; fixture ticket TCK-1007 is read-only",
+        "Dev UI keeps sessions in a local SQLite file (.adk/session.db)",
+        "No central ticket system exists in this repo"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Contract: get_cell_kpis(cell_id)",
+      "items": [
+        "ok: status, cell_id, site_id, region, window_end",
+        "kpis{4}, breaches[{kpi,value,threshold,rule}]",
+        "suggested_priority P1/P2/NONE, open_ticket_id",
+        "error: status, error_code, message"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Contract: create_ticket(cell_id, priority)",
+      "items": [
+        "created: status, ticket_id, priority, summary",
+        "exists: status, ticket_id, priority",
+        "error: INVALID_CELL_ID / INVALID_PRIORITY",
+        "error: CELL_NOT_FOUND / PRIORITY_NOT_JUSTIFIED"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Working tree differs from pinned commit",
+      "items": [
+        "Uncommitted: OPEN_ROUTER_KEY routes the model via LiteLlm/OpenRouter",
+        "Uncommitted: custom dashboard chat bypasses the ADK Runner"
+      ]
+    }
+  ]
+}

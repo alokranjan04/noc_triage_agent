@@ -370,6 +370,191 @@ header .actions { display: flex; gap: .5rem; align-items: center; }
 .tickets-table tr:hover td { background: var(--bg-hover); }
 .tickets-table .mono { font-family: var(--font-mono); font-weight: 600; }
 
+/* Eval results */
+.eval-summary-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: .75rem;
+  margin-bottom: 1.25rem;
+}
+.eval-summary-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: .85rem 1rem;
+  text-align: center;
+}
+.eval-summary-card .es-label { font-size: .68rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .05em; }
+.eval-summary-card .es-value { font-size: 1.5rem; font-weight: 700; font-family: var(--font-mono); margin: .15rem 0; }
+.eval-summary-card.pass .es-value { color: var(--green); }
+.eval-summary-card.warn .es-value { color: var(--yellow); }
+
+.eval-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: .75rem;
+}
+.eval-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition), transform var(--transition);
+  cursor: default;
+}
+.eval-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.eval-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.eval-card.pass::before { background: var(--green); }
+.eval-card.fail::before { background: var(--red); }
+.eval-card .ec-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: .5rem; }
+.eval-card .ec-id { font-family: var(--font-mono); font-size: .82rem; font-weight: 600; }
+.eval-card .ec-badges { display: flex; gap: .35rem; flex-wrap: wrap; }
+.eval-card .ec-prompt { font-size: .78rem; color: var(--text-secondary); margin-bottom: .6rem; font-style: italic; }
+.eval-card .ec-tools { font-size: .72rem; color: var(--text-muted); margin-bottom: .5rem; font-family: var(--font-mono); }
+.eval-card .ec-scores { display: flex; gap: 1rem; }
+.eval-card .ec-score { flex: 1; }
+.eval-card .ec-score-label { font-size: .65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+.eval-card .ec-score-bar { height: 6px; background: var(--bg-primary); border-radius: 3px; overflow: hidden; margin: .25rem 0; }
+.eval-card .ec-score-fill { height: 100%; border-radius: 3px; transition: width .6s cubic-bezier(.22,1,.36,1); }
+.eval-card .ec-score-fill.high { background: var(--green); }
+.eval-card .ec-score-fill.mid  { background: var(--yellow); }
+.eval-card .ec-score-fill.low  { background: var(--red); }
+.eval-card .ec-score-val { font-size: .75rem; font-family: var(--font-mono); font-weight: 600; }
+
+/* Golden dataset */
+.gd-tabs {
+  display: flex;
+  gap: .35rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.gd-tab {
+  font-size: .78rem;
+  font-weight: 600;
+  padding: .45rem 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.gd-tab:hover { border-color: var(--accent); color: var(--text-primary); }
+.gd-tab.active { background: var(--accent-dim); border-color: var(--accent-dim); color: #fff; }
+.gd-tab .tab-count { font-size: .68rem; opacity: .7; margin-left: .3rem; }
+
+.gd-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: .75rem;
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+.gd-card:hover { border-color: var(--border-focus); }
+.gd-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .85rem 1.15rem;
+  cursor: pointer;
+  user-select: none;
+}
+.gd-card-header:hover { background: var(--bg-hover); }
+.gd-card-left { display: flex; align-items: center; gap: .75rem; flex: 1; min-width: 0; }
+.gd-card-num {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(88,166,255,.1);
+  padding: .2rem .5rem;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+.gd-card-prompt {
+  font-size: .82rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gd-card-right { display: flex; align-items: center; gap: .5rem; flex-shrink: 0; }
+.gd-card-chevron {
+  font-size: .85rem;
+  color: var(--text-muted);
+  transition: transform var(--transition);
+}
+.gd-card.open .gd-card-chevron { transform: rotate(90deg); }
+
+.gd-card-body {
+  display: none;
+  padding: 0 1.15rem 1.15rem;
+  animation: slideIn .25s ease;
+}
+.gd-card.open .gd-card-body { display: block; }
+
+.gd-field { margin-bottom: .85rem; }
+.gd-field-label {
+  font-size: .68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+  margin-bottom: .3rem;
+}
+.gd-field-value {
+  font-size: .82rem;
+  color: var(--text-primary);
+  line-height: 1.55;
+}
+.gd-field-value.mono {
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .55rem .75rem;
+}
+.gd-field-value .tool-step {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  background: rgba(88,166,255,.08);
+  border: 1px solid rgba(88,166,255,.2);
+  border-radius: var(--radius-sm);
+  padding: .25rem .55rem;
+  margin: .15rem .25rem .15rem 0;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  color: var(--accent);
+}
+.gd-field-value .tool-arrow { color: var(--text-muted); margin: 0 .15rem; }
+.gd-assertions { display: flex; flex-wrap: wrap; gap: .35rem; }
+.gd-assert {
+  font-size: .72rem;
+  font-family: var(--font-mono);
+  padding: .2rem .55rem;
+  border-radius: var(--radius-sm);
+}
+.gd-assert.include { background: var(--green-bg); color: var(--green); border: 1px solid rgba(63,185,80,.2); }
+.gd-assert.exclude { background: var(--red-bg); color: var(--red); border: 1px solid rgba(248,81,73,.2); }
+.gd-reqs { display: flex; flex-wrap: wrap; gap: .25rem; }
+.gd-req {
+  font-size: .65rem;
+  font-family: var(--font-mono);
+  padding: .15rem .45rem;
+  border-radius: 12px;
+  background: rgba(188,140,255,.1);
+  color: var(--purple);
+  border: 1px solid rgba(188,140,255,.2);
+}
+
 /* ------------------------------------------------------------------ */
 /*  Right pane — chat                                                  */
 /* ------------------------------------------------------------------ */
@@ -582,6 +767,23 @@ header .actions { display: flex; gap: .5rem; align-items: center; }
       <div class="section-title" style="margin-top:1.5rem">Tickets</div>
       <div class="tickets-table-wrap" id="ticketsWrap">
         <div class="skeleton" style="height:100px"></div>
+      </div>
+
+      <!-- Eval results -->
+      <div class="section-title" style="margin-top:2rem">Eval Results (15 Cases)</div>
+      <div id="evalSummary"></div>
+      <div class="eval-grid" id="evalGrid">
+        <div class="eval-card"><div class="skeleton" style="height:120px"></div></div>
+        <div class="eval-card"><div class="skeleton" style="height:120px"></div></div>
+        <div class="eval-card"><div class="skeleton" style="height:120px"></div></div>
+      </div>
+
+      <!-- Golden Dataset -->
+      <div class="section-title" style="margin-top:2.5rem">Golden Dataset</div>
+      <div class="gd-tabs" id="gdTabs"></div>
+      <div id="gdCards">
+        <div class="gd-card"><div class="skeleton" style="height:80px"></div></div>
+        <div class="gd-card"><div class="skeleton" style="height:80px"></div></div>
       </div>
     </div>
 
@@ -901,9 +1103,206 @@ function toast(message, type = 'info') {
 }
 
 // =======================================================================
+//  Eval results
+// =======================================================================
+async function loadEvals() {
+  try {
+    const evals = await fetchJSON('/api/evals');
+    renderEvalSummary(evals);
+    renderEvalGrid(evals);
+  } catch (e) {
+    console.error('Failed to load evals', e);
+  }
+}
+
+function renderEvalSummary(evals) {
+  const total = evals.length;
+  const passed = evals.filter(e => e.passed).length;
+  const safety = evals.filter(e => e.safety);
+  const safetyPassed = safety.filter(e => e.passed).length;
+  const avgTraj = evals.reduce((s, e) => s + (e.trajectory_score || 0), 0) / total;
+  const avgResp = evals.reduce((s, e) => s + (e.response_score || 0), 0) / total;
+
+  document.getElementById('evalSummary').innerHTML = `
+    <div class="eval-summary-bar">
+      <div class="eval-summary-card ${passed === total ? 'pass' : 'warn'}">
+        <div class="es-label">Cases Passed</div>
+        <div class="es-value">${passed}/${total}</div>
+      </div>
+      <div class="eval-summary-card pass">
+        <div class="es-label">Trajectory Avg</div>
+        <div class="es-value">${avgTraj.toFixed(3)}</div>
+      </div>
+      <div class="eval-summary-card ${avgResp >= 0.5 ? 'pass' : 'warn'}">
+        <div class="es-label">Response Avg</div>
+        <div class="es-value">${avgResp.toFixed(3)}</div>
+      </div>
+      <div class="eval-summary-card ${safetyPassed === safety.length ? 'pass' : 'warn'}">
+        <div class="es-label">Safety Cases</div>
+        <div class="es-value">${safetyPassed}/${safety.length}</div>
+      </div>
+    </div>`;
+}
+
+function renderEvalGrid(evals) {
+  document.getElementById('evalGrid').innerHTML = evals.map(e => {
+    const cls = e.passed ? 'pass' : 'fail';
+    const tScore = e.trajectory_score != null ? e.trajectory_score : 0;
+    const rScore = e.response_score != null ? e.response_score : 0;
+    const tCls = tScore >= 0.9 ? 'high' : tScore >= 0.5 ? 'mid' : 'low';
+    const rCls = rScore >= 0.5 ? 'high' : rScore >= 0.3 ? 'mid' : 'low';
+    const toolsStr = e.expected_tools.length ? e.expected_tools.join(' → ') : '(no tools)';
+
+    return `
+    <div class="eval-card ${cls}">
+      <div class="ec-header">
+        <div class="ec-id">${e.id}</div>
+        <div class="ec-badges">
+          ${e.safety ? '<span class="badge p1" style="font-size:.6rem">SAFETY</span>' : ''}
+          <span class="badge ${cls === 'pass' ? 'healthy' : 'p1'}" style="font-size:.6rem">${cls === 'pass' ? 'PASS' : 'FAIL'}</span>
+        </div>
+      </div>
+      <div class="ec-prompt">"${e.prompt}"</div>
+      <div class="ec-tools">Tools: ${toolsStr}</div>
+      <div class="ec-scores">
+        <div class="ec-score">
+          <div class="ec-score-label">Trajectory</div>
+          <div class="ec-score-bar"><div class="ec-score-fill ${tCls}" style="width:${tScore * 100}%"></div></div>
+          <div class="ec-score-val" style="color:var(--${tCls === 'high' ? 'green' : tCls === 'mid' ? 'yellow' : 'red'})">${tScore.toFixed(2)}</div>
+        </div>
+        <div class="ec-score">
+          <div class="ec-score-label">Response</div>
+          <div class="ec-score-bar"><div class="ec-score-fill ${rCls}" style="width:${rScore * 100}%"></div></div>
+          <div class="ec-score-val" style="color:var(--${rCls === 'high' ? 'green' : rCls === 'mid' ? 'yellow' : 'red'})">${rScore.toFixed(2)}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// =======================================================================
+//  Golden Dataset
+// =======================================================================
+let _gdData = [];
+let _gdFilter = 'all';
+
+const _catLabels = {
+  all:        'All',
+  happy_path: 'Happy Paths',
+  guardrail:  'Guardrails',
+  intent:     'Intent Handling',
+};
+
+async function loadGoldenDataset() {
+  try {
+    _gdData = await fetchJSON('/api/evals');
+    renderGoldenTabs();
+    renderGoldenCards();
+  } catch (e) {
+    console.error('Failed to load golden dataset', e);
+  }
+}
+
+function renderGoldenTabs() {
+  const counts = { all: _gdData.length, happy_path: 0, guardrail: 0, intent: 0 };
+  _gdData.forEach(c => { if (counts[c.category] !== undefined) counts[c.category]++; });
+
+  document.getElementById('gdTabs').innerHTML = Object.entries(_catLabels).map(([key, label]) => `
+    <button class="gd-tab ${_gdFilter === key ? 'active' : ''}" onclick="setGdFilter('${key}')">
+      ${label}<span class="tab-count">${counts[key]}</span>
+    </button>
+  `).join('');
+}
+
+function setGdFilter(cat) {
+  _gdFilter = cat;
+  renderGoldenTabs();
+  renderGoldenCards();
+}
+
+function renderGoldenCards() {
+  const filtered = _gdFilter === 'all' ? _gdData : _gdData.filter(c => c.category === _gdFilter);
+  const container = document.getElementById('gdCards');
+
+  container.innerHTML = filtered.map((c, i) => {
+    const num = String(i + 1).padStart(2, '0');
+    const catClass = c.category === 'happy_path' ? 'healthy' : c.category === 'guardrail' ? 'p2' : 'p3';
+    const catLabel = _catLabels[c.category] || c.category;
+
+    // Tool steps
+    const toolsHtml = (c.expected_tools_detail || []).map((t, ti) => {
+      const argsStr = t.args ? Object.entries(t.args).map(([k,v]) => `${k}=${v}`).join(', ') : '';
+      return `<div class="tool-step">
+        <span style="color:var(--text-muted);font-size:.7rem;margin-right:.4rem">${ti+1}.</span>
+        <span style="color:var(--accent);font-weight:600">${t.name}</span>${argsStr ? `<span class="tool-arrow">(</span>${argsStr}<span class="tool-arrow">)</span>` : ''}
+      </div>`;
+    }).join('');
+    const noTools = !c.expected_tools_detail?.length ? '<span style="color:var(--text-muted);font-style:italic">No tool calls expected</span>' : '';
+
+    // Assertions
+    const includeHtml = (c.must_include || []).map(p => `<span class="gd-assert include">✓ ${escapeHTML(p)}</span>`).join('');
+    const excludeHtml = (c.must_not_include || []).map(p => `<span class="gd-assert exclude">✗ ${escapeHTML(p)}</span>`).join('');
+    const assertionsHtml = (includeHtml || excludeHtml) ? `
+      <div class="gd-field">
+        <div class="gd-field-label">Assertions</div>
+        <div class="gd-assertions">${includeHtml}${excludeHtml}</div>
+      </div>` : '';
+
+    // REQs
+    const reqsHtml = (c.reqs || []).map(r => `<span class="gd-req">${r}</span>`).join('');
+
+    return `
+    <div class="gd-card" id="gd-${c.id}">
+      <div class="gd-card-header" onclick="toggleGdCard('${c.id}')">
+        <div class="gd-card-left">
+          <div class="gd-card-num">${num}</div>
+          <div>
+            <div style="font-weight:600;font-size:.88rem">${c.id}</div>
+            <div class="gd-card-prompt">"${escapeHTML(c.prompt)}"</div>
+          </div>
+        </div>
+        <div class="gd-card-right">
+          <span class="badge ${catClass}" style="font-size:.62rem">${catLabel}</span>
+          ${c.safety ? '<span class="badge p1" style="font-size:.6rem">SAFETY</span>' : ''}
+          <span class="gd-card-chevron">▶</span>
+        </div>
+      </div>
+      <div class="gd-card-body">
+        <div class="gd-field">
+          <div class="gd-field-label">Prompt</div>
+          <div class="gd-field-value mono">${escapeHTML(c.prompt)}</div>
+        </div>
+        <div class="gd-field">
+          <div class="gd-field-label">Expected Tool Calls</div>
+          <div class="gd-field-value mono">${toolsHtml || noTools}</div>
+        </div>
+        <div class="gd-field">
+          <div class="gd-field-label">Reference Response</div>
+          <div class="gd-field-value">${escapeHTML(c.reference_response || '')}</div>
+        </div>
+        ${assertionsHtml}
+        ${reqsHtml ? `<div class="gd-field"><div class="gd-field-label">Requirements</div><div class="gd-reqs">${reqsHtml}</div></div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleGdCard(id) {
+  document.getElementById('gd-' + id)?.classList.toggle('open');
+}
+
+function escapeHTML(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// =======================================================================
 //  Boot
 // =======================================================================
 loadCells();
+loadEvals();
+loadGoldenDataset();
 </script>
 </body>
 </html>

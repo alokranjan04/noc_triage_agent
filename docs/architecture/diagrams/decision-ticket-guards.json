@@ -1,0 +1,79 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Decision Engine 2 of 2: ordered guards inside create_ticket (tools.py)",
+    "subtitle": "Every guard runs in code, in this order. The first failing guard ends the call; tools never raise.",
+    "output": "docs/architecture/diagrams/decision-ticket-guards.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/alokranjan04/noc_triage_agent.git",
+      "provider": "github",
+      "revision": "f2c089c2e8d8d6d643c2b147a30071650e72d9b4"
+    }
+  },
+  "lanes": [
+    { "id": "caller", "label": "Caller" },
+    { "id": "guards", "label": "Guards in code" },
+    { "id": "stop", "label": "Returned without creating a ticket", "variant": "exception" }
+  ],
+  "mainPath": ["start", "g1", "g2", "g3", "g4", "g5", "created"],
+  "nodes": [
+    { "id": "start", "lane": "caller", "col": 0, "type": "database", "label": "create_ticket", "sublabel": "(cell_id, priority)", "width": 132,
+      "sources": [ { "path": "noc_triage_agent/tools.py", "line": 69, "end_line": 72, "label": "signature" } ] },
+    { "id": "g1", "lane": "guards", "col": 1, "type": "security", "label": "valid cell id?", "sublabel": "guard 1", "width": 132,
+      "sources": [ { "path": "noc_triage_agent/tools.py", "line": 74, "end_line": 79, "label": "id guard" } ] },
+    { "id": "g2", "lane": "guards", "col": 2, "type": "security", "label": "valid priority?", "sublabel": "guard 2", "width": 132,
+      "sources": [ { "path": "noc_triage_agent/tools.py", "line": 81, "end_line": 86, "label": "priority guard" } ] },
+    { "id": "g3", "lane": "guards", "col": 3, "type": "security", "label": "cell exists in CSV?", "sublabel": "guard 3", "width": 132,
+      "sources": [ { "path": "noc_triage_agent/tools.py", "line": 88, "end_line": 94, "label": "exists guard" } ] },
+    { "id": "g4", "lane": "guards", "col": 4, "type": "security", "label": "open ticket exists?", "sublabel": "guard 4: duplicates", "width": 132,
+      "sources": [ { "path": "noc_triage_agent/tools.py", "line": 100, "end_line": 103, "label": "duplicate guard" }, { "path": "noc_triage_agent/repository.py", "line": 66, "end_line": 75, "label": "find_open" } ] },
+    { "id": "g5", "lane": "guards", "col": 5, "type": "security", "label": "priority justified?", "sublabel": "guard 5: P1 needs avail < 95", "width": 132,
+      "sources": [ { "path": "noc_triage_agent/tools.py", "line": 113, "end_line": 120, "label": "justified guard" }, { "path": "noc_triage_agent/rules.py", "line": 53, "end_line": 62, "label": "is_priority_justified" } ] },
+    { "id": "created", "lane": "caller", "col": 5, "type": "backend", "label": "status: created", "sublabel": "ticket_id TCK-dddd", "tag": "state['tickets']", "width": 132,
+      "sources": [ { "path": "noc_triage_agent/tools.py", "line": 122, "end_line": 133, "label": "build + store" } ] },
+    { "id": "e1", "lane": "stop", "col": 1, "type": "security", "label": "INVALID_CELL_ID", "sublabel": "status: error", "width": 132 },
+    { "id": "e2", "lane": "stop", "col": 2, "type": "security", "label": "INVALID_PRIORITY", "sublabel": "status: error", "width": 132 },
+    { "id": "e3", "lane": "stop", "col": 3, "type": "security", "label": "CELL_NOT_FOUND", "sublabel": "status: error", "width": 132 },
+    { "id": "exists", "lane": "stop", "col": 4, "type": "cloud", "label": "status: exists", "sublabel": "existing ticket_id", "width": 132 },
+    { "id": "e5", "lane": "stop", "col": 5, "type": "security", "label": "NOT_JUSTIFIED", "sublabel": "status: error", "width": 132 }
+  ],
+  "edges": [
+    { "id": "a0", "from": "start", "to": "g1", "role": "main" },
+    { "id": "a1", "from": "g1", "to": "g2", "label": "yes", "role": "main" },
+    { "id": "a2", "from": "g2", "to": "g3", "label": "yes", "role": "main" },
+    { "id": "a3", "from": "g3", "to": "g4", "label": "yes", "role": "main" },
+    { "id": "a4", "from": "g4", "to": "g5", "label": "none open", "role": "main" },
+    { "id": "a5", "from": "g5", "to": "created", "label": "yes", "variant": "emphasis", "role": "main" },
+    { "id": "b1", "from": "g1", "to": "e1", "label": "no", "variant": "security", "role": "error" },
+    { "id": "b2", "from": "g2", "to": "e2", "label": "no", "variant": "security", "role": "error" },
+    { "id": "b3", "from": "g3", "to": "e3", "label": "no", "variant": "security", "role": "error" },
+    { "id": "b4", "from": "g4", "to": "exists", "label": "open found", "variant": "dashed", "role": "branch" },
+    { "id": "b5", "from": "g5", "to": "e5", "label": "no", "variant": "security", "role": "error" }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Mandatory safety rules and where they live",
+      "items": [
+        "No P1 without availability < 95.0: guard 5 (rules.py:53-62), test_create_ticket_rejects_p1_without_availability_breach",
+        "No duplicate ticket: guard 4 (tools.py:100-103), tests for exists",
+        "No network changes: the agent only has these two tools (agent.py:39); refusal is prompt-driven, eval c14",
+        "Summary text is built by code; no free-text parameter exists (rules.py:72-81)"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Observed behaviours worth knowing",
+      "items": [
+        "Guard 4 runs before guard 5: a duplicate returns exists even if priority is unjustified",
+        "The exists reply reports the fixture priority or defaults to P2 for session tickets",
+        "P3 passes guard 5 for any existing cell, even a breaching one"
+      ]
+    }
+  ]
+}
+
+

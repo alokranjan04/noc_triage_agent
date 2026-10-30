@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "5e69f8cb-1686-46f0-86c0-5ae601e732ca",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\decision-ticket-guards.json",
+  "output": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\decision-ticket-guards.html",
+  "specification": {
+    "sha256": "5123601ebab7c1c9148b391bd557d3360681f95d36ebead2cb83f45ba0a567bc",
+    "bytes": 5635
+  },
+  "artifact": {
+    "sha256": "62655d4bae9af972479c4fcb9860b17b6b26610c6ba056cd5180188489a7c995",
+    "bytes": 827927
+  }
+}

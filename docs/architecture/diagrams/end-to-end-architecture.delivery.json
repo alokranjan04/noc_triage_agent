@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "499c7e8e-d707-491a-9d76-f04bbdbd8d15",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-architecture.json",
+  "output": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-architecture.html",
+  "specification": {
+    "sha256": "80dee2a91477eba2cbc883707244540732a7b1d631f232a49a9b7a27f31e5242",
+    "bytes": 13903
+  },
+  "artifact": {
+    "sha256": "88bfacdb9b6fa60eb151b407e18978867ade4643ad67863b00a942f7a891981b",
+    "bytes": 847816
+  }
+}

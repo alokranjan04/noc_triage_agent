@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "51e33076-ab70-458a-8b98-0f4edd195a2a",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\qa-evaluation-architecture.json",
+  "output": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\qa-evaluation-architecture.html",
+  "specification": {
+    "sha256": "efec97c1bd427dcb73e9e683b45733ed6d61599bf383815d264a7f8216ae1362",
+    "bytes": 7220
+  },
+  "artifact": {
+    "sha256": "b025742cb4ec30478b140e7c418850d44cfd04f98614f1f1f7500ab87548d58b",
+    "bytes": 831830
+  }
+}

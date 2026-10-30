@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Sequence 2 of 2: guarded ticket creation to final answer",
+    "subtitle": "Continues Sequence 1 (CELL-1002, P2). Numbers [10]-[16] match the architecture diagram.",
+    "output": "docs/architecture/diagrams/sequence-2-ticket-to-answer.html",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/alokranjan04/noc_triage_agent.git",
+      "provider": "github",
+      "revision": "f2c089c2e8d8d6d643c2b147a30071650e72d9b4"
+    }
+  },
+  "participants": [
+    { "id": "operator", "type": "frontend", "label": "NOC Engineer", "sublabel": "user",
+      "sources": [ { "path": "evals/cases.yaml", "line": 27, "end_line": 29, "label": "c02 prompt" } ] },
+    { "id": "ui", "type": "frontend", "label": "ADK Dev UI", "sublabel": "adk web / run",
+      "sources": [ { "path": "CLAUDE.md", "line": 22, "end_line": 30, "label": "adk commands" } ] },
+    { "id": "agent", "type": "database", "label": "ADK Agent", "sublabel": "root_agent",
+      "sources": [ { "path": "noc_triage_agent/agent.py", "line": 34, "end_line": 40, "label": "root_agent" } ] },
+    { "id": "llm", "type": "database", "label": "Gemini LLM", "sublabel": "decides + writes",
+      "sources": [ { "path": "noc_triage_agent/config.py", "line": 10, "label": "NOC_AGENT_MODEL" } ] },
+    { "id": "ticket", "type": "messagebus", "label": "create_ticket", "sublabel": "tool B",
+      "sources": [ { "path": "noc_triage_agent/tools.py", "line": 69, "end_line": 133, "label": "create_ticket" } ] },
+    { "id": "data", "type": "backend", "label": "CSV KPI Repo", "sublabel": "cell_kpis.csv",
+      "sources": [ { "path": "noc_triage_agent/repository.py", "line": 21, "end_line": 49, "label": "CsvKpiRepository" } ] },
+    { "id": "store", "type": "backend", "label": "TicketStore", "sublabel": "tickets",
+      "sources": [ { "path": "noc_triage_agent/repository.py", "line": 52, "end_line": 85, "label": "TicketStore" } ] },
+    { "id": "rules", "type": "cloud", "label": "rules.py", "sublabel": "decision engine",
+      "sources": [ { "path": "noc_triage_agent/rules.py", "line": 44, "end_line": 81, "label": "priority + summary" } ] }
+  ],
+  "messages": [
+    { "id": "m15b", "from": "llm", "to": "agent", "y": 170, "label": "function_call create_ticket(CELL-1002, P2)", "variant": "return" },
+    { "id": "m10", "from": "agent", "to": "ticket", "y": 202, "label": "[10] create_ticket(cell_id, priority, ctx)", "variant": "emphasis" },
+    { "id": "m10a", "from": "ticket", "to": "data", "y": 232, "label": "re-read KPIs: get_latest" },
+    { "id": "m10b", "from": "data", "to": "ticket", "y": 260, "label": "row dict", "variant": "return" },
+    { "id": "m11", "from": "ticket", "to": "store", "y": 292, "label": "[11] find_open: duplicate check", "variant": "security" },
+    { "id": "m12", "from": "store", "to": "ticket", "y": 320, "label": "[12] None: no open ticket", "variant": "return" },
+    { "id": "m10c", "from": "ticket", "to": "rules", "y": 352, "label": "is_priority_justified, build_summary", "variant": "security" },
+    { "id": "m10d", "from": "rules", "to": "ticket", "y": 380, "label": "True; TCK-1002; summary", "variant": "return" },
+    { "id": "m13", "from": "ticket", "to": "store", "y": 412, "label": "[13] add(ticket) to state", "variant": "emphasis" },
+    { "id": "m14", "from": "ticket", "to": "agent", "y": 446, "label": "[14] status created, TCK-1002, P2", "variant": "return" },
+    { "id": "m15c", "from": "agent", "to": "llm", "y": 478, "label": "[15] function_response: ticket result" },
+    { "id": "m15d", "from": "llm", "to": "agent", "y": 506, "label": "final text, max 120 words", "variant": "return" },
+    { "id": "m16a", "from": "agent", "to": "ui", "y": 540, "label": "final response event", "variant": "return" },
+    { "id": "m16b", "from": "ui", "to": "operator", "y": 568, "label": "[16] breaching; opened TCK-1002 (P2)", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "agent", "from": 166, "to": 544, "type": "database" },
+    { "participant": "ticket", "from": 198, "to": 450, "type": "messagebus" }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Guards inside create_ticket (in order)",
+      "items": [
+        "1 id format, 2 priority in P1/P2/P3, 3 cell exists",
+        "4 duplicate: open ticket returns status exists, nothing created",
+        "5 is_priority_justified: P1 needs availability < 95.0; P2 needs a breach",
+        "Only then: ticket id, summary built by code, stored in session state"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Illustrative answer",
+      "items": [
+        "Wording follows eval case c02 reference; real model text varies",
+        "Tickets live in session state, not a database"
+      ]
+    }
+  ]
+}

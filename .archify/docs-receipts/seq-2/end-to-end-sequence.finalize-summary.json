@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "sequence",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.json",
+    "sha256": "59e236c5b83e321e6c16c7e92358542d8a19a85494a8b5e0b93f64b6b01dcd14",
+    "bytes": 7496
+  },
+  "artifact": {
+    "path": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.html"
+  },
+  "gates": {
+    "validate": "fail",
+    "deliver": "not-run",
+    "check": "not-run",
+    "browser-check": "not-run"
+  },
+  "failedStage": "validate",
+  "diagnostics": [
+    {
+      "code": "composition/label-canvas-containment",
+      "severity": "error",
+      "message": "[composition/label-canvas-containment] showcase sequence label \"[11] find_open(cell_id): duplicate check\" on messages[17] id \"m11\" \"ticket\" -> \"store\" extends past the right edge by 15px (label rect [659, 828, 276, 18]; viewBox 920x1343) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+      "subject": {
+        "diagramType": "sequence",
+        "collection": "messages",
+        "index": 17,
+        "id": "m11",
+        "from": "ticket",
+        "to": "store"
+      },
+      "evidence": {
+        "label": "[11] find_open(cell_id): duplicate check",
+        "labelRect": {
+          "x": 659,
+          "y": 828,
+          "width": 276,
+          "height": 18
+        },
+        "viewBox": [
+          920,
+          1343
+        ],
+        "overflowPx": {
+          "right": 15
+        },
+        "tolerancePx": 0.5
+      },
+      "supportedFixes": [
+        "shorten the label, reorder participants, or enlarge meta.viewBox"
+      ]
+    },
+    {
+      "code": "sequence/note-overlap",
+      "severity": "error",
+      "message": "Note on message \"function_call create_ticket(cell_id='CELL-1002', priority='P2')\" wraps to 3 lines (down to y=724) and reaches message \"[10] create_ticket(cell_id, priority, tool_context)\" at y=745 — move \"[10] create_ticket(cell_id, priority, tool_context)\" and later messages down so it sits at y=746 or below, or shorten the note.",
+      "subject": {
+        "diagramType": "sequence",
+        "message": "function_call create_ticket(cell_id='CELL-1002', priority='P2')",
+        "path": "/messages/13/note",
+        "from": "llm",
+        "to": "agent"
+      },
+      "evidence": {
+        "lines": 3,
+        "note": {
+          "x": 306,
+          "y": 689.6,
+          "width": 42,
+          "height": 34.4
+        },
+        "blocker": {
+          "message": "[10] create_ticket(cell_id, priority, tool_context)",
+          "path": "/messages/14/y",
+          "y": 745,
+          "kind": "message label",
+          "bounds": {
+            "x": 316.7,
+            "y": 725,
+            "width": 348.6,
+            "height": 18
+          }
+        },
+        "requiredY": 746
+      },
+      "supportedFixes": [
+        "set /messages/14/y to 746"
+      ]
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Participants exceed viewBox width — set meta.viewBox[0] to at least 982 or remove a participant.",
+      "subject": {
+        "diagramType": "sequence"
+      }
+    },
+    {
+      "code": "composition/label-canvas-containment",
+      "severity": "error",
+      "message": "[composition/label-canvas-containment] showcase sequence label \"[12] None (fixtures + state scanned)\" on messages[18] id \"m12\" \"store\" -> \"ticket\" extends past the right edge by 1.8px (label rect [672, 856, 250, 18]; viewBox 920x1343) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+      "subject": {
+        "diagramType": "sequence",
+        "collection": "messages",
+        "index": 18,
+        "id": "m12",
+        "from": "store",
+        "to": "ticket"
+      },
+      "evidence": {
+        "label": "[12] None (fixtures + state scanned)",
+        "labelRect": {
+          "x": 672.2,
+          "y": 856,
+          "width": 249.6,
+          "height": 18
+        },
+        "viewBox": [
+          920,
+          1343
+        ],
+        "overflowPx": {
+          "right": 1.8
+        },
+        "tolerancePx": 0.5
+      },
+      "supportedFixes": [
+        "shorten the label, reorder participants, or enlarge meta.viewBox"
+      ]
+    },
+    {
+      "code": "composition/label-canvas-containment",
+      "severity": "error",
+      "message": "[composition/label-canvas-containment] showcase sequence label \"[13] add(ticket) -> state['tickets']\" on messages[21] id \"m13\" \"ticket\" -> \"store\" extends past the right edge by 1.8px (label rect [672, 953, 250, 18]; viewBox 920x1343) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+      "subject": {
+        "diagramType": "sequence",
+        "collection": "messages",
+        "index": 21,
+        "id": "m13",
+        "from": "ticket",
+        "to": "store"
+      },
+      "evidence": {
+        "label": "[13] add(ticket) -> state['tickets']",
+        "labelRect": {
+          "x": 672.2,
+          "y": 953,
+          "width": 249.6,
+          "height": 18
+        },
+        "viewBox": [
+          920,
+          1343
+        ],
+        "overflowPx": {
+          "right": 1.8
+        },
+        "tolerancePx": 0.5
+      },
+      "supportedFixes": [
+        "shorten the label, reorder participants, or enlarge meta.viewBox"
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 5,
+    "shown": 5,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\docs-receipts\\seq-2\\end-to-end-sequence.finalize.json",
+    "summaryReceipt": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\docs-receipts\\seq-2\\end-to-end-sequence.finalize-summary.json"
+  },
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.1.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.2.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-30T11:19:50.925Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.1.0 → 3.2.0. A previous check at 2026-10-30T11:19:50.925Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.2.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:70e210265c59f24dcbdf2a502ff671104b5454e7ee7d3554aecd86bad32384f5"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 751,
+  "nextAction": {
+    "action": "edit-in-place",
+    "candidate": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.json",
+    "constraint": "Preserve unaffected semantics and geometry; apply each diagnostic's supportedFixes, or the fix its message names, and do not replace the whole candidate.",
+    "then": "finalize-once"
+  }
+}

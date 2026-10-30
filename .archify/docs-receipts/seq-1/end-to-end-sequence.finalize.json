@@ -1,0 +1,385 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "sequence",
+  "quality": "showcase",
+  "startedAt": "2026-10-30T11:49:16.391Z",
+  "specification": {
+    "path": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.json",
+    "sha256": "3135b60f0c3a89fa8534d8c8629991bf2a6c1a1da451b4e60227ff662722dc1d",
+    "bytes": 7669
+  },
+  "artifact": {
+    "path": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.html"
+  },
+  "stages": {
+    "validate": {
+      "status": "fail",
+      "exitCode": 1,
+      "durationMs": null,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\Alok Ranjan\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "deliver",
+        "sequence",
+        "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.json",
+        "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.html",
+        "--quality",
+        "showcase",
+        "--repo-root",
+        "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": false,
+        "command": "deliver",
+        "receiptId": "e5610fe1-055b-4033-bf3c-02721224f9b1",
+        "stage": "render",
+        "type": "sequence",
+        "input": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.json",
+        "output": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.html",
+        "error": "Sequence layout validation failed:\n- Label \"CsvKpiRepository\" (~109px) is wider than component \"data\" — shorten it to at most 13 text units (CJK counts 2; participant boxes are 86px: the automatic 1085px canvas cannot widen further without its 7px sublabels falling below the desktop reading minimum, so keep meta.viewBox omitted).\n- Sublabel \"fixture + session state\" needs ~97px at the 7px minimum that stays readable on this 1085px canvas, but participant \"store\" provides 78px — shorten the sublabel (participant boxes are 86px: the automatic 1085px canvas cannot widen further without its 7px sublabels falling below the desktop reading minimum, so keep meta.viewBox omitted).\n- [composition/label-canvas-containment] showcase sequence label \"[16] 'CELL-1002 is breaching: drop_call_rate_pct 3.4 vs 2.0. Opened TCK-1002 (P2).'\" on messages[26] id \"m16b\" \"ui\" -> \"operator\" extends past the left edge by 118.8px (label rect [-119, 1190, 560, 18]; viewBox 1085x1343) — shorten the label, reorder participants, or enlarge meta.viewBox.\n- Note on message \"function_call get_cell_kpis(cell_id='CELL-1002')\" wraps to 3 lines (down to y=334) and reaches message \"[4] get_cell_kpis(cell_id, tool_context)\" at y=350 — move \"[4] get_cell_kpis(cell_id, tool_context)\" and later messages down so it sits at y=356 or below, or shorten the note.\n- Note on message \"function_call create_ticket(cell_id='CELL-1002', priority='P2')\" wraps to 3 lines (down to y=724) and reaches message \"[10] create_ticket(cell_id, priority, tool_context)\" at y=745 — move \"[10] create_ticket(cell_id, priority, tool_context)\" and later messages down so it sits at y=746 or below, or shorten the note.",
+        "diagnostics": [
+          {
+            "code": "composition/label-canvas-containment",
+            "severity": "error",
+            "message": "[composition/label-canvas-containment] showcase sequence label \"[16] 'CELL-1002 is breaching: drop_call_rate_pct 3.4 vs 2.0. Opened TCK-1002 (P2).'\" on messages[26] id \"m16b\" \"ui\" -> \"operator\" extends past the left edge by 118.8px (label rect [-119, 1190, 560, 18]; viewBox 1085x1343) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+            "subject": {
+              "diagramType": "sequence",
+              "collection": "messages",
+              "index": 26,
+              "id": "m16b",
+              "from": "ui",
+              "to": "operator"
+            },
+            "evidence": {
+              "label": "[16] 'CELL-1002 is breaching: drop_call_rate_pct 3.4 vs 2.0. Opened TCK-1002 (P2).'",
+              "labelRect": {
+                "x": -118.83749999999998,
+                "y": 1190,
+                "width": 559.8,
+                "height": 18
+              },
+              "viewBox": [
+                1085,
+                1343
+              ],
+              "overflowPx": {
+                "left": 118.8
+              },
+              "tolerancePx": 0.5
+            },
+            "supportedFixes": [
+              "shorten the label, reorder participants, or enlarge meta.viewBox"
+            ]
+          },
+          {
+            "code": "sequence/participant-label-overflow",
+            "severity": "error",
+            "message": "Label \"CsvKpiRepository\" (~109px) is wider than component \"data\" — shorten it to at most 13 text units (CJK counts 2; participant boxes are 86px: the automatic 1085px canvas cannot widen further without its 7px sublabels falling below the desktop reading minimum, so keep meta.viewBox omitted).",
+            "subject": {
+              "diagramType": "sequence",
+              "nodeId": "data",
+              "path": "/participants/7/label"
+            },
+            "evidence": {
+              "viewBoxWidth": 1085,
+              "participantWidth": 86,
+              "text": "CsvKpiRepository",
+              "requiredWidth": 108.8,
+              "availableWidth": 92
+            },
+            "supportedFixes": [
+              "shorten the participant label while preserving its role"
+            ]
+          },
+          {
+            "code": "sequence/participant-sublabel-overflow",
+            "severity": "error",
+            "message": "Sublabel \"fixture + session state\" needs ~97px at the 7px minimum that stays readable on this 1085px canvas, but participant \"store\" provides 78px — shorten the sublabel (participant boxes are 86px: the automatic 1085px canvas cannot widen further without its 7px sublabels falling below the desktop reading minimum, so keep meta.viewBox omitted).",
+            "subject": {
+              "diagramType": "sequence",
+              "nodeId": "store",
+              "path": "/participants/8/sublabel"
+            },
+            "evidence": {
+              "viewBoxWidth": 1085,
+              "participantWidth": 86,
+              "text": "fixture + session state",
+              "requiredWidth": 96.6,
+              "availableWidth": 78,
+              "minimumFontPx": 7
+            },
+            "supportedFixes": [
+              "shorten the participant sublabel while preserving its role or protocol; move supplementary detail into a card"
+            ]
+          },
+          {
+            "code": "sequence/note-overlap",
+            "severity": "error",
+            "message": "Note on message \"function_call get_cell_kpis(cell_id='CELL-1002')\" wraps to 3 lines (down to y=334) and reaches message \"[4] get_cell_kpis(cell_id, tool_context)\" at y=350 — move \"[4] get_cell_kpis(cell_id, tool_context)\" and later messages down so it sits at y=356 or below, or shorten the note.",
+            "subject": {
+              "diagramType": "sequence",
+              "message": "function_call get_cell_kpis(cell_id='CELL-1002')",
+              "path": "/messages/3/note",
+              "from": "llm",
+              "to": "agent"
+            },
+            "evidence": {
+              "lines": 3,
+              "note": {
+                "x": 348.3,
+                "y": 299.6,
+                "width": 63,
+                "height": 34.4
+              },
+              "blocker": {
+                "message": "[4] get_cell_kpis(cell_id, tool_context)",
+                "path": "/messages/4/y",
+                "y": 350,
+                "kind": "message label",
+                "bounds": {
+                  "x": 303.4,
+                  "y": 330,
+                  "width": 276,
+                  "height": 18
+                }
+              },
+              "requiredY": 356
+            },
+            "supportedFixes": [
+              "set /messages/4/y to 356"
+            ]
+          },
+          {
+            "code": "sequence/note-overlap",
+            "severity": "error",
+            "message": "Note on message \"function_call create_ticket(cell_id='CELL-1002', priority='P2')\" wraps to 3 lines (down to y=724) and reaches message \"[10] create_ticket(cell_id, priority, tool_context)\" at y=745 — move \"[10] create_ticket(cell_id, priority, tool_context)\" and later messages down so it sits at y=746 or below, or shorten the note.",
+            "subject": {
+              "diagramType": "sequence",
+              "message": "function_call create_ticket(cell_id='CELL-1002', priority='P2')",
+              "path": "/messages/13/note",
+              "from": "llm",
+              "to": "agent"
+            },
+            "evidence": {
+              "lines": 3,
+              "note": {
+                "x": 348.3,
+                "y": 689.6,
+                "width": 79.8,
+                "height": 34.4
+              },
+              "blocker": {
+                "message": "[10] create_ticket(cell_id, priority, tool_context)",
+                "path": "/messages/14/y",
+                "y": 745,
+                "kind": "message label",
+                "bounds": {
+                  "x": 379.2,
+                  "y": 725,
+                  "width": 348.6,
+                  "height": 18
+                }
+              },
+              "requiredY": 746
+            },
+            "supportedFixes": [
+              "set /messages/14/y to 746"
+            ]
+          }
+        ],
+        "provenance": "absent",
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      },
+      "execution": "embedded-in-deliver"
+    },
+    "deliver": {
+      "status": "not-run",
+      "execution": "blocked-by-validate"
+    }
+  },
+  "diagnostics": [
+    {
+      "code": "composition/label-canvas-containment",
+      "severity": "error",
+      "message": "[composition/label-canvas-containment] showcase sequence label \"[16] 'CELL-1002 is breaching: drop_call_rate_pct 3.4 vs 2.0. Opened TCK-1002 (P2).'\" on messages[26] id \"m16b\" \"ui\" -> \"operator\" extends past the left edge by 118.8px (label rect [-119, 1190, 560, 18]; viewBox 1085x1343) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+      "subject": {
+        "diagramType": "sequence",
+        "collection": "messages",
+        "index": 26,
+        "id": "m16b",
+        "from": "ui",
+        "to": "operator"
+      },
+      "evidence": {
+        "label": "[16] 'CELL-1002 is breaching: drop_call_rate_pct 3.4 vs 2.0. Opened TCK-1002 (P2).'",
+        "labelRect": {
+          "x": -118.83749999999998,
+          "y": 1190,
+          "width": 559.8,
+          "height": 18
+        },
+        "viewBox": [
+          1085,
+          1343
+        ],
+        "overflowPx": {
+          "left": 118.8
+        },
+        "tolerancePx": 0.5
+      },
+      "supportedFixes": [
+        "shorten the label, reorder participants, or enlarge meta.viewBox"
+      ]
+    },
+    {
+      "code": "sequence/participant-label-overflow",
+      "severity": "error",
+      "message": "Label \"CsvKpiRepository\" (~109px) is wider than component \"data\" — shorten it to at most 13 text units (CJK counts 2; participant boxes are 86px: the automatic 1085px canvas cannot widen further without its 7px sublabels falling below the desktop reading minimum, so keep meta.viewBox omitted).",
+      "subject": {
+        "diagramType": "sequence",
+        "nodeId": "data",
+        "path": "/participants/7/label"
+      },
+      "evidence": {
+        "viewBoxWidth": 1085,
+        "participantWidth": 86,
+        "text": "CsvKpiRepository",
+        "requiredWidth": 108.8,
+        "availableWidth": 92
+      },
+      "supportedFixes": [
+        "shorten the participant label while preserving its role"
+      ]
+    },
+    {
+      "code": "sequence/participant-sublabel-overflow",
+      "severity": "error",
+      "message": "Sublabel \"fixture + session state\" needs ~97px at the 7px minimum that stays readable on this 1085px canvas, but participant \"store\" provides 78px — shorten the sublabel (participant boxes are 86px: the automatic 1085px canvas cannot widen further without its 7px sublabels falling below the desktop reading minimum, so keep meta.viewBox omitted).",
+      "subject": {
+        "diagramType": "sequence",
+        "nodeId": "store",
+        "path": "/participants/8/sublabel"
+      },
+      "evidence": {
+        "viewBoxWidth": 1085,
+        "participantWidth": 86,
+        "text": "fixture + session state",
+        "requiredWidth": 96.6,
+        "availableWidth": 78,
+        "minimumFontPx": 7
+      },
+      "supportedFixes": [
+        "shorten the participant sublabel while preserving its role or protocol; move supplementary detail into a card"
+      ]
+    },
+    {
+      "code": "sequence/note-overlap",
+      "severity": "error",
+      "message": "Note on message \"function_call get_cell_kpis(cell_id='CELL-1002')\" wraps to 3 lines (down to y=334) and reaches message \"[4] get_cell_kpis(cell_id, tool_context)\" at y=350 — move \"[4] get_cell_kpis(cell_id, tool_context)\" and later messages down so it sits at y=356 or below, or shorten the note.",
+      "subject": {
+        "diagramType": "sequence",
+        "message": "function_call get_cell_kpis(cell_id='CELL-1002')",
+        "path": "/messages/3/note",
+        "from": "llm",
+        "to": "agent"
+      },
+      "evidence": {
+        "lines": 3,
+        "note": {
+          "x": 348.3,
+          "y": 299.6,
+          "width": 63,
+          "height": 34.4
+        },
+        "blocker": {
+          "message": "[4] get_cell_kpis(cell_id, tool_context)",
+          "path": "/messages/4/y",
+          "y": 350,
+          "kind": "message label",
+          "bounds": {
+            "x": 303.4,
+            "y": 330,
+            "width": 276,
+            "height": 18
+          }
+        },
+        "requiredY": 356
+      },
+      "supportedFixes": [
+        "set /messages/4/y to 356"
+      ]
+    },
+    {
+      "code": "sequence/note-overlap",
+      "severity": "error",
+      "message": "Note on message \"function_call create_ticket(cell_id='CELL-1002', priority='P2')\" wraps to 3 lines (down to y=724) and reaches message \"[10] create_ticket(cell_id, priority, tool_context)\" at y=745 — move \"[10] create_ticket(cell_id, priority, tool_context)\" and later messages down so it sits at y=746 or below, or shorten the note.",
+      "subject": {
+        "diagramType": "sequence",
+        "message": "function_call create_ticket(cell_id='CELL-1002', priority='P2')",
+        "path": "/messages/13/note",
+        "from": "llm",
+        "to": "agent"
+      },
+      "evidence": {
+        "lines": 3,
+        "note": {
+          "x": 348.3,
+          "y": 689.6,
+          "width": 79.8,
+          "height": 34.4
+        },
+        "blocker": {
+          "message": "[10] create_ticket(cell_id, priority, tool_context)",
+          "path": "/messages/14/y",
+          "y": 745,
+          "kind": "message label",
+          "bounds": {
+            "x": 379.2,
+            "y": 725,
+            "width": 348.6,
+            "height": 18
+          }
+        },
+        "requiredY": 746
+      },
+      "supportedFixes": [
+        "set /messages/14/y to 746"
+      ]
+    }
+  ],
+  "evidence": {
+    "receipt": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\docs-receipts\\seq-1\\end-to-end-sequence.finalize.json",
+    "summaryReceipt": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\docs-receipts\\seq-1\\end-to-end-sequence.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "failedStage": "validate",
+  "finishedAt": "2026-10-30T11:49:17.168Z",
+  "durationMs": 777,
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.1.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.2.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-30T11:19:50.925Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.1.0 → 3.2.0. A previous check at 2026-10-30T11:19:50.925Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.2.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:70e210265c59f24dcbdf2a502ff671104b5454e7ee7d3554aecd86bad32384f5"
+  }
+}

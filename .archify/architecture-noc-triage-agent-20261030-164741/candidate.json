@@ -1,0 +1,424 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "NOC Triage Agent — System Architecture",
+    "subtitle": "The LLM decides what to do; deterministic Python decides what is allowed",
+    "output": ".archify/architecture-noc-triage-agent-20261030-164741/noc-triage-architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/alokranjan04/noc_triage_agent.git",
+      "provider": "github",
+      "revision": "f2c089c2e8d8d6d643c2b147a30071650e72d9b4"
+    }
+  },
+  "components": [
+    {
+      "id": "operator",
+      "type": "external",
+      "label": "NOC Operator",
+      "sublabel": "adk web / browser",
+      "pos": [
+        40,
+        180
+      ],
+      "size": [
+        120,
+        64
+      ],
+      "sources": [
+        {
+          "path": "specs/02-design.md",
+          "line": 5,
+          "end_line": 14,
+          "label": "design overview"
+        },
+        {
+          "path": "ui/app.py",
+          "line": 8,
+          "end_line": 11,
+          "label": "dashboard usage"
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "noc_triage_agent",
+      "sublabel": "ADK Agent (root_agent)",
+      "tag": "LLM-driven",
+      "pos": [
+        290,
+        180
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/agent.py",
+          "line": 10,
+          "end_line": 32,
+          "label": "triage instruction"
+        },
+        {
+          "path": "noc_triage_agent/agent.py",
+          "line": 34,
+          "end_line": 40,
+          "label": "root_agent"
+        }
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "cloud",
+      "label": "Gemini model",
+      "sublabel": "NOC_AGENT_MODEL",
+      "pos": [
+        290,
+        40
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/config.py",
+          "line": 10,
+          "end_line": 13,
+          "label": "model + project config"
+        },
+        {
+          "path": "noc_triage_agent/agent.py",
+          "line": 36,
+          "label": "model=config.MODEL"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "Tool functions",
+      "sublabel": "get_cell_kpis · create_ticket",
+      "pos": [
+        560,
+        180
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/tools.py",
+          "line": 15,
+          "end_line": 66,
+          "label": "get_cell_kpis"
+        },
+        {
+          "path": "noc_triage_agent/tools.py",
+          "line": 69,
+          "end_line": 133,
+          "label": "create_ticket"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "type": "security",
+      "label": "Business rules",
+      "sublabel": "thresholds + priority gate",
+      "tag": "deterministic",
+      "pos": [
+        560,
+        40
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 8,
+          "end_line": 15,
+          "label": "thresholds"
+        },
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 44,
+          "end_line": 62,
+          "label": "priority checks"
+        }
+      ]
+    },
+    {
+      "id": "repo",
+      "type": "backend",
+      "label": "Repository layer",
+      "sublabel": "CsvKpiRepository · TicketStore",
+      "pos": [
+        830,
+        167
+      ],
+      "size": [
+        140,
+        90
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/repository.py",
+          "line": 21,
+          "end_line": 49,
+          "label": "CsvKpiRepository"
+        },
+        {
+          "path": "noc_triage_agent/repository.py",
+          "line": 52,
+          "end_line": 85,
+          "label": "TicketStore"
+        }
+      ]
+    },
+    {
+      "id": "kpi_csv",
+      "type": "database",
+      "label": "cell_kpis.csv",
+      "sublabel": "latest KPI snapshot",
+      "pos": [
+        1090,
+        50
+      ],
+      "size": [
+        150,
+        60
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/repository.py",
+          "line": 24,
+          "end_line": 43,
+          "label": "CSV load"
+        }
+      ]
+    },
+    {
+      "id": "fixture_tickets",
+      "type": "database",
+      "label": "open_tickets.json",
+      "sublabel": "fixture tickets",
+      "pos": [
+        1090,
+        182
+      ],
+      "size": [
+        150,
+        60
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/repository.py",
+          "line": 60,
+          "end_line": 64,
+          "label": "fixture load"
+        }
+      ]
+    },
+    {
+      "id": "session_state",
+      "type": "database",
+      "label": "Session state",
+      "sublabel": "state['tickets'] (in-memory)",
+      "pos": [
+        1090,
+        320
+      ],
+      "size": [
+        150,
+        60
+      ],
+      "sources": [
+        {
+          "path": "noc_triage_agent/repository.py",
+          "line": 55,
+          "end_line": 58,
+          "label": "state dict"
+        },
+        {
+          "path": "noc_triage_agent/repository.py",
+          "line": 77,
+          "end_line": 85,
+          "label": "TicketStore.add"
+        },
+        {
+          "path": "ui/app.py",
+          "line": 36,
+          "end_line": 37,
+          "label": "dashboard state"
+        }
+      ]
+    },
+    {
+      "id": "dashboard",
+      "type": "frontend",
+      "label": "Web Dashboard",
+      "sublabel": "FastAPI :8501",
+      "pos": [
+        290,
+        350
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "sources": [
+        {
+          "path": "ui/app.py",
+          "line": 40,
+          "end_line": 44,
+          "label": "FakeToolContext"
+        },
+        {
+          "path": "ui/app.py",
+          "line": 57,
+          "end_line": 96,
+          "label": "cell + ticket APIs"
+        },
+        {
+          "path": "ui/app.py",
+          "line": 99,
+          "end_line": 132,
+          "label": "chat via ADK Runner"
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "noc_triage_agent/data (bundled fixtures)",
+      "wraps": [
+        "kpi_csv",
+        "fixture_tickets"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "operator-to-agent",
+      "from": "operator",
+      "to": "agent",
+      "label": "chat",
+      "variant": "emphasis"
+    },
+    {
+      "id": "agent-to-llm",
+      "from": "agent",
+      "to": "llm",
+      "label": "prompt + tool calls"
+    },
+    {
+      "id": "agent-to-tools",
+      "from": "agent",
+      "to": "tools",
+      "label": "tool calls",
+      "variant": "emphasis"
+    },
+    {
+      "id": "tools-to-rules",
+      "from": "tools",
+      "to": "rules",
+      "label": "breach + priority check",
+      "variant": "security"
+    },
+    {
+      "id": "tools-to-repo",
+      "from": "tools",
+      "to": "repo",
+      "label": "lookup / save"
+    },
+    {
+      "id": "repo-to-csv",
+      "from": "repo",
+      "to": "kpi_csv",
+      "label": "read"
+    },
+    {
+      "id": "repo-to-fixtures",
+      "from": "repo",
+      "to": "fixture_tickets",
+      "label": "read"
+    },
+    {
+      "id": "repo-to-state",
+      "from": "repo",
+      "to": "session_state",
+      "label": "read / write"
+    },
+    {
+      "id": "operator-to-dashboard",
+      "from": "operator",
+      "to": "dashboard",
+      "label": "HTTP",
+      "fromSide": "bottom",
+      "toSide": "left"
+    },
+    {
+      "id": "dashboard-to-agent",
+      "from": "dashboard",
+      "to": "agent",
+      "label": "/api/chat (optional)",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "dashboard-to-tools",
+      "from": "dashboard",
+      "to": "tools",
+      "label": "direct calls, no LLM",
+      "fromSide": "right",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Division of labour",
+      "items": [
+        "The LLM follows the triage instruction and chooses which tool to call",
+        "Tools re-check thresholds and priority in Python, so the model cannot override them",
+        "The agent has only two tools and cannot change the network"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Guardrails in code",
+      "items": [
+        "Cell id must match CELL-dddd; unknown cells return an error",
+        "P1 needs availability below 95%; P2 needs at least one KPI breach",
+        "An already-open ticket is returned instead of creating a duplicate",
+        "Ticket summary is built from KPI data, never from user text"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Two entry points",
+      "items": [
+        "Agent path: operator chats with the ADK agent, which calls the tools",
+        "Dashboard path: FastAPI calls the same tools directly with a stand-in tool context",
+        "Dashboard chat panel reaches the agent through an ADK Runner"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Data",
+      "items": [
+        "KPI snapshot and fixture tickets are read from files bundled in the package",
+        "Tickets created at runtime live only in session state"
+      ]
+    }
+  ]
+}

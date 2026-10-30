@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "312322ba-7411-4bbf-a356-b954dc92318b",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\architecture-noc-triage-agent-20261030-164741\\candidate.json",
+  "output": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\architecture-noc-triage-agent-20261030-164741\\noc-triage-architecture.html",
+  "specification": {
+    "sha256": "8d7a1f17a35bd12c37fe7a82f85eca48158183f3ef40aa6265d83ada7eaa36b0",
+    "bytes": 9777
+  },
+  "artifact": {
+    "sha256": "f1f7248344aaa23535d4d2a3672063cbdda8b83c2c36fbabc5fc591bf20e3775",
+    "bytes": 833914
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "bc51703a-6206-407b-ad57-225ab6685f1c",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\deployment-architecture.json",
+  "output": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\deployment-architecture.html",
+  "specification": {
+    "sha256": "09fe0f04652bf2b8501eefaee4d39620816a4bd1e0a57db4c2d90b2741ac5f57",
+    "bytes": 8105
+  },
+  "artifact": {
+    "sha256": "f1a30bb74fe2b47cbcf1d7c8897e7ab7569a2e67da691557b6a1d95feb7eb69b",
+    "bytes": 837133
+  }
+}

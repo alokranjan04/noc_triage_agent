@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\decision-ticket-guards.json",
+    "sha256": "7d7daf8bfd5f282756fd57cf41a004ee5dc6bea3fb10e1743700aa461337870c",
+    "bytes": 5633
+  },
+  "artifact": {
+    "path": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\decision-ticket-guards.html",
+    "sha256": "705d790172c0512ec3539bc31390256bbe727ed128cde706473a8f41325aa616",
+    "bytes": 827927
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\docs-receipts\\decision-ticket-guards-2\\decision-ticket-guards.finalize.json",
+    "summaryReceipt": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\docs-receipts\\decision-ticket-guards-2\\decision-ticket-guards.finalize-summary.json",
+    "browserCheckReceipt": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\docs-receipts\\decision-ticket-guards-2\\decision-ticket-guards.browser-check.json"
+  },
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.1.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.2.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-30T11:19:50.925Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.1.0 → 3.2.0. A previous check at 2026-10-30T11:19:50.925Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.2.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:70e210265c59f24dcbdf2a502ff671104b5454e7ee7d3554aecd86bad32384f5"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 3259
+}

@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "sequence",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.json",
+    "sha256": "72cf7af556b9a43d5c4db040a3d8e13393ffb7f8b660be847af1ee71360e7fbc",
+    "bytes": 7494
+  },
+  "artifact": {
+    "path": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\end-to-end-sequence.html",
+    "sha256": "dc20bc73f2f839d00b82c14190dc4f4f135dfe83defc75e73f92633134f1ac13",
+    "bytes": 836659
+  },
+  "gates": {
+    "validate": "not-run",
+    "deliver": "fail",
+    "check": "not-run",
+    "browser-check": "not-run"
+  },
+  "failedStage": "deliver",
+  "diagnostics": [
+    {
+      "code": "composition/viewport-height",
+      "severity": "error",
+      "message": "Showcase delivery reported composition/viewport-height; zero warnings are required.",
+      "subject": {
+        "stage": "deliver",
+        "check": "composition"
+      },
+      "evidence": {
+        "reportedSeverity": "warning",
+        "readerFit": null,
+        "viewBoxWidth": 1085,
+        "viewBoxHeight": 1343,
+        "viewportWidth": 1440,
+        "viewportHeight": 900,
+        "ratio": 0.81,
+        "wideRatio": 1.55,
+        "svgWidthPx": 1346,
+        "svgHeightPx": 1666,
+        "fixedChromePx": 126,
+        "pageHeightPx": 1792,
+        "overflowPx": 892
+      },
+      "supportedFixes": [
+        "Preserve every node, relationship, and label. This 1085x1343 canvas (ratio 0.81) declares no intrinsic-height fit and is below the 1.55 wide ratio, so the desktop Reader can neither narrow it nor accept vertical scroll: it renders 1666px tall at the full 1346px width and the page reaches 1792px before cards against 900px, a certain visual-check failure. Either compact vertical spacing so meta.viewBox height is at most 700 at this width, or spread content sideways so the width is at least 2082 at this height; for architecture and readable-v2 workflow, omitting meta.viewBox lets the renderer size the canvas and declare the fit."
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 1,
+    "shown": 1,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\docs-receipts\\seq-4\\end-to-end-sequence.finalize.json",
+    "summaryReceipt": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\docs-receipts\\seq-4\\end-to-end-sequence.finalize-summary.json"
+  },
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.1.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.2.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-30T11:19:50.925Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.1.0 → 3.2.0. A previous check at 2026-10-30T11:19:50.925Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.2.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:70e210265c59f24dcbdf2a502ff671104b5454e7ee7d3554aecd86bad32384f5"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 913
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "3132a782-f841-4592-8ee6-4221ce53d8a2",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\sequence-2-ticket-to-answer.json",
+  "output": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\sequence-2-ticket-to-answer.html",
+  "specification": {
+    "sha256": "dfb234181ff237199e6d9d9c6e1ea4685101cf8d2f6ad4b88c25adf5a05f61a4",
+    "bytes": 4937
+  },
+  "artifact": {
+    "sha256": "dcf9fbb41fd5da3b50020741a755b8819c9493e2620f522d08fc44fba714f2ea",
+    "bytes": 822527
+  }
+}

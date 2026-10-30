@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "84d0fca0-8622-4adc-9011-f6b6354667e6",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\decision-kpi-priority.json",
+  "output": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\decision-kpi-priority.html",
+  "specification": {
+    "sha256": "1ceb19cafba05c8318161cb6c8eb2cd866ec527d8058e6bf4b9a6fcb63f7b28a",
+    "bytes": 7166
+  },
+  "artifact": {
+    "sha256": "5d6682d647e8f8024cd649770b40a7f59855a64cd4020ef535c085dd265a4d49",
+    "bytes": 826229
+  }
+}

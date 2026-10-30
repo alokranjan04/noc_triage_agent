@@ -1,0 +1,332 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Decision Engine 1 of 2: KPI breaches and suggested priority (rules.py)",
+    "subtitle": "Pure Python, no LLM. Strict comparisons: a value exactly at the threshold is NOT a breach.",
+    "output": "docs/architecture/diagrams/decision-kpi-priority.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/alokranjan04/noc_triage_agent.git",
+      "provider": "github",
+      "revision": "f2c089c2e8d8d6d643c2b147a30071650e72d9b4"
+    }
+  },
+  "lanes": [
+    {
+      "label": "Drop call rate",
+      "id": "drop"
+    },
+    {
+      "label": "PRB utilization",
+      "id": "prb"
+    },
+    {
+      "label": "Decision flow",
+      "id": "core"
+    },
+    {
+      "label": "Availability",
+      "id": "avail"
+    },
+    {
+      "label": "Throughput",
+      "id": "thru"
+    },
+    {
+      "variant": "exception",
+      "id": "out",
+      "label": "Result"
+    }
+  ],
+  "mainPath": [
+    "row",
+    "c_avail",
+    "breaches",
+    "d_p1",
+    "p1"
+  ],
+  "nodes": [
+    {
+      "id": "row",
+      "lane": "core",
+      "col": 0,
+      "type": "database",
+      "label": "KPI row",
+      "sublabel": "cell_kpis.csv",
+      "width": 132,
+      "sources": [
+        {
+          "path": "noc_triage_agent/data/cell_kpis.csv",
+          "line": 1,
+          "end_line": 9,
+          "label": "KPI fixture"
+        }
+      ]
+    },
+    {
+      "id": "c_drop",
+      "lane": "drop",
+      "col": 1,
+      "type": "cloud",
+      "label": "drop_call_rate_pct",
+      "sublabel": "breach if > 2.0",
+      "width": 132,
+      "sources": [
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 9,
+          "label": "threshold"
+        },
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 37,
+          "end_line": 38,
+          "label": "> check"
+        }
+      ]
+    },
+    {
+      "id": "c_prb",
+      "lane": "prb",
+      "col": 1,
+      "type": "cloud",
+      "label": "prb_utilization_pct",
+      "sublabel": "breach if > 85.0",
+      "width": 132,
+      "sources": [
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 10,
+          "label": "threshold"
+        }
+      ]
+    },
+    {
+      "id": "c_avail",
+      "lane": "avail",
+      "col": 1,
+      "type": "cloud",
+      "label": "availability_pct",
+      "sublabel": "breach if < 99.0",
+      "width": 132,
+      "sources": [
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 11,
+          "label": "threshold"
+        },
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 39,
+          "end_line": 40,
+          "label": "< check"
+        }
+      ]
+    },
+    {
+      "id": "c_thru",
+      "lane": "thru",
+      "col": 1,
+      "type": "cloud",
+      "label": "avg_throughput_mbps",
+      "sublabel": "breach if < 5.0",
+      "width": 132,
+      "sources": [
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 12,
+          "label": "threshold"
+        }
+      ]
+    },
+    {
+      "id": "breaches",
+      "lane": "core",
+      "col": 2,
+      "type": "cloud",
+      "label": "find_breaches()",
+      "sublabel": "list of Breach",
+      "tag": "fixed KPI order",
+      "width": 132,
+      "sources": [
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 26,
+          "end_line": 41,
+          "label": "find_breaches"
+        }
+      ]
+    },
+    {
+      "id": "d_p1",
+      "lane": "core",
+      "col": 3,
+      "type": "security",
+      "label": "availability < 95.0?",
+      "sublabel": "checked first",
+      "tag": "P1 guardrail",
+      "width": 132,
+      "sources": [
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 44,
+          "end_line": 47,
+          "label": "suggested_priority"
+        }
+      ]
+    },
+    {
+      "id": "d_any",
+      "lane": "core",
+      "col": 4,
+      "type": "security",
+      "label": "any breach?",
+      "sublabel": "checked second",
+      "width": 132,
+      "sources": [
+        {
+          "path": "noc_triage_agent/rules.py",
+          "line": 48,
+          "end_line": 50,
+          "label": "P2 / NONE"
+        }
+      ]
+    },
+    {
+      "id": "p1",
+      "lane": "out",
+      "col": 3,
+      "type": "backend",
+      "label": "P1",
+      "sublabel": "critical",
+      "width": 132
+    },
+    {
+      "id": "p2",
+      "lane": "out",
+      "col": 4,
+      "type": "backend",
+      "label": "P2",
+      "sublabel": "major",
+      "width": 132
+    },
+    {
+      "id": "none",
+      "lane": "out",
+      "col": 5,
+      "type": "backend",
+      "label": "NONE",
+      "sublabel": "healthy, no ticket",
+      "width": 132
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "row",
+      "to": "c_drop",
+      "role": "branch"
+    },
+    {
+      "id": "e2",
+      "from": "row",
+      "to": "c_prb",
+      "role": "branch"
+    },
+    {
+      "id": "e3",
+      "from": "row",
+      "to": "c_avail",
+      "role": "main"
+    },
+    {
+      "id": "e4",
+      "from": "row",
+      "to": "c_thru",
+      "role": "branch"
+    },
+    {
+      "id": "e5",
+      "from": "c_drop",
+      "to": "breaches",
+      "role": "branch"
+    },
+    {
+      "id": "e6",
+      "from": "c_prb",
+      "to": "breaches",
+      "role": "branch"
+    },
+    {
+      "id": "e7",
+      "from": "c_avail",
+      "to": "breaches",
+      "role": "main"
+    },
+    {
+      "id": "e8",
+      "from": "c_thru",
+      "to": "breaches",
+      "role": "branch"
+    },
+    {
+      "id": "e9",
+      "from": "breaches",
+      "to": "d_p1",
+      "label": "values + breaches",
+      "variant": "security",
+      "role": "main"
+    },
+    {
+      "id": "e10",
+      "from": "d_p1",
+      "to": "p1",
+      "label": "yes",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e11",
+      "from": "d_p1",
+      "to": "d_any",
+      "label": "no",
+      "variant": "default"
+    },
+    {
+      "id": "e12",
+      "from": "d_any",
+      "to": "p2",
+      "label": "yes",
+      "variant": "default"
+    },
+    {
+      "id": "e13",
+      "from": "d_any",
+      "to": "none",
+      "label": "no",
+      "variant": "default"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Thresholds (rules.py lines 8-15)",
+      "items": [
+        "drop_call_rate_pct > 2.0; prb_utilization_pct > 85.0",
+        "availability_pct < 99.0; avg_throughput_mbps < 5.0",
+        "P1 only when availability_pct < 95.0"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Worked examples (CSV rows)",
+      "items": [
+        "CELL-1004: availability 82.0 -> 3 breaches -> P1",
+        "CELL-1005: availability 97.5 -> 1 breach -> P2, not P1",
+        "CELL-1008: all values exactly at limits -> NONE"
+      ]
+    }
+  ]
+}

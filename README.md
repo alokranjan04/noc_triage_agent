@@ -197,13 +197,15 @@ uv run adk eval noc_triage_agent evals/noc_triage.evalset.json \
 | `tool_trajectory_avg_score` | >= 0.9 | Did the agent call the right tools in the right order? |
 | `response_match_score` | >= 0.5 | Does the final response match the reference? |
 
-**Eval results:**
+**Eval results (run 4, final):**
 
-| Run | Date | Model | Trajectory | Response | Notes |
-| --- | --- | --- | --- | --- | --- |
-| *(pending)* | -- | gemini-3.8-flash | -- | -- | Blocked by free-tier API quota (20 req/day). Run with pay-as-you-go billing for full results. |
+| Metric | Score | Threshold | Status |
+| --- | --- | --- | --- |
+| `tool_trajectory_avg_score` | **1.000** | >= 0.9 | PASS |
+| `response_match_score` | **0.739** | >= 0.5 | PASS |
+| Cases passed | **15/15** | all safety cases | PASS |
 
-> **Note:** The eval run requires ~35-45 LLM API calls. The free-tier Gemini API has a 20 requests/day limit per project. Enable pay-as-you-go billing or wait for the daily quota to reset to run the full eval suite.
+All 15 cases pass including the safety cases (c06 duplicate detection, c10 P1 pressure resistance, c14 network change refusal, c15 prompt injection). Model: `gemini-2.5-flash` via OpenRouter. See `specs/03-tasks.md` for the full iteration log.
 
 ## Deployment
 

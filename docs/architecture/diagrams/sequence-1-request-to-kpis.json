@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Sequence 1 of 2: request to KPI evaluation (CELL-1002)",
+    "subtitle": "Illustrative run of 'Triage CELL-1002.' (eval case c02). Numbers [1]-[9] match the architecture diagram.",
+    "output": "docs/architecture/diagrams/sequence-1-request-to-kpis.html",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/alokranjan04/noc_triage_agent.git",
+      "provider": "github",
+      "revision": "f2c089c2e8d8d6d643c2b147a30071650e72d9b4"
+    }
+  },
+  "participants": [
+    { "id": "operator", "type": "frontend", "label": "NOC Engineer", "sublabel": "user",
+      "sources": [ { "path": "evals/cases.yaml", "line": 27, "end_line": 29, "label": "c02 prompt" } ] },
+    { "id": "ui", "type": "frontend", "label": "ADK Dev UI", "sublabel": "adk web / run",
+      "sources": [ { "path": "CLAUDE.md", "line": 22, "end_line": 30, "label": "adk commands" } ] },
+    { "id": "agent", "type": "database", "label": "ADK Agent", "sublabel": "root_agent",
+      "sources": [ { "path": "noc_triage_agent/agent.py", "line": 34, "end_line": 40, "label": "root_agent" } ] },
+    { "id": "llm", "type": "database", "label": "Gemini LLM", "sublabel": "decides",
+      "sources": [ { "path": "noc_triage_agent/config.py", "line": 10, "label": "NOC_AGENT_MODEL" } ] },
+    { "id": "kpi", "type": "messagebus", "label": "get_cell_kpis", "sublabel": "tool A",
+      "sources": [ { "path": "noc_triage_agent/tools.py", "line": 15, "end_line": 66, "label": "get_cell_kpis" } ] },
+    { "id": "data", "type": "backend", "label": "CSV KPI Repo", "sublabel": "cell_kpis.csv",
+      "sources": [ { "path": "noc_triage_agent/repository.py", "line": 21, "end_line": 49, "label": "CsvKpiRepository" } ] },
+    { "id": "store", "type": "backend", "label": "TicketStore", "sublabel": "tickets",
+      "sources": [ { "path": "noc_triage_agent/repository.py", "line": 52, "end_line": 85, "label": "TicketStore" } ] },
+    { "id": "rules", "type": "cloud", "label": "rules.py", "sublabel": "decision engine",
+      "sources": [ { "path": "noc_triage_agent/rules.py", "line": 26, "end_line": 62, "label": "breach + priority" } ] }
+  ],
+  "messages": [
+    { "id": "m1", "from": "operator", "to": "ui", "y": 170, "label": "[1] 'Triage CELL-1002.'", "variant": "emphasis" },
+    { "id": "m2", "from": "ui", "to": "agent", "y": 200, "label": "[2] message + session_id", "variant": "emphasis" },
+    { "id": "m3", "from": "agent", "to": "llm", "y": 230, "label": "[3] instruction + text + tool specs" },
+    { "id": "m3r", "from": "llm", "to": "agent", "y": 260, "label": "function_call get_cell_kpis(CELL-1002)", "variant": "return" },
+    { "id": "m4", "from": "agent", "to": "kpi", "y": 292, "label": "[4] get_cell_kpis(cell_id, tool_context)", "variant": "emphasis" },
+    { "id": "m5", "from": "kpi", "to": "data", "y": 324, "label": "[5] get_latest('CELL-1002')" },
+    { "id": "m6", "from": "data", "to": "kpi", "y": 352, "label": "[6] row dict or None", "variant": "return" },
+    { "id": "m7a", "from": "kpi", "to": "store", "y": 384, "label": "find_open('CELL-1002')" },
+    { "id": "m7b", "from": "store", "to": "kpi", "y": 412, "label": "None: no open ticket", "variant": "return" },
+    { "id": "m8", "from": "kpi", "to": "rules", "y": 444, "label": "[8] find_breaches, suggested_priority", "variant": "security" },
+    { "id": "m9", "from": "rules", "to": "kpi", "y": 472, "label": "[9] drop_call_rate 3.4 > 2.0 -> P2", "variant": "return" },
+    { "id": "m7", "from": "kpi", "to": "agent", "y": 506, "label": "[7] status ok, breaches, suggested_priority P2", "variant": "return" },
+    { "id": "m15a", "from": "agent", "to": "llm", "y": 538, "label": "function_response (dict above)" }
+  ],
+  "activations": [
+    { "participant": "agent", "from": 196, "to": 542, "type": "database" },
+    { "participant": "kpi", "from": 288, "to": 510, "type": "messagebus" }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "LLM versus code",
+      "items": [
+        "LLM picks the tool and passes the cell id",
+        "Code validates the id (regex ^CELL-dddd$), reads the CSV, and finds breaches",
+        "Bad id returns INVALID_CELL_ID; unknown cell returns CELL_NOT_FOUND"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Next",
+      "items": [
+        "Sequence 2 continues from the function_response with ticket creation",
+        "Alternative branches are in end-to-end-sequence.md"
+      ]
+    }
+  ]
+}

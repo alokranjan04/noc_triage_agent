@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Deployment: local development (implemented) and Google Cloud (proposed only)",
+    "subtitle": "Nothing is deployed. No Dockerfile, deploy/ folder or requirements.txt exists; tasks T11-T13 are unchecked.",
+    "output": "docs/architecture/diagrams/deployment-architecture.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/alokranjan04/noc_triage_agent.git",
+      "provider": "github",
+      "revision": "f2c089c2e8d8d6d643c2b147a30071650e72d9b4"
+    },
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": { "label": "Blue: user interfaces and actors" },
+        "database": { "label": "Purple: ADK agent and LLM" },
+        "backend": { "label": "Green: local data and stores" },
+        "external": { "label": "Grey: infrastructure and supporting services" },
+        "cloud": { "label": "Yellow: configuration" },
+        "security": { "label": "Red: not implemented, proposed only" }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "developer", "type": "frontend", "icon": "person",
+      "label": "Developer", "sublabel": "Windows, Python 3.12, uv", "tag": "implemented",
+      "pos": [40, 190], "size": [150, 70],
+      "sources": [
+        { "path": "pyproject.toml", "line": 10, "end_line": 15, "label": "python + deps" },
+        { "path": "CLAUDE.md", "line": 22, "end_line": 30, "label": "uv run commands" }
+      ]
+    },
+    {
+      "id": "adkweb", "type": "frontend",
+      "label": "adk web / adk run", "sublabel": "local ADK dev UI", "tag": "implemented",
+      "pos": [340, 190], "size": [150, 70],
+      "sources": [
+        { "path": "specs/03-tasks.md", "line": 34, "end_line": 37, "label": "T6 dev UI run" }
+      ]
+    },
+    {
+      "id": "sessions", "type": "backend", "icon": "database",
+      "label": "Session store", "sublabel": ".adk/session.db (SQLite)", "tag": "ADK default, local",
+      "pos": [340, 40], "size": [150, 70],
+      "sources": [
+        { "path": ".gitignore", "line": 7, "label": ".adk/ is git-ignored" }
+      ]
+    },
+    {
+      "id": "agentpkg", "type": "database", "icon": "active",
+      "label": "noc_triage_agent", "sublabel": "package: agent, tools, data", "tag": "implemented",
+      "pos": [640, 190], "size": [150, 70],
+      "sources": [
+        { "path": "noc_triage_agent/__init__.py", "line": 1, "end_line": 5, "label": "package entry" },
+        { "path": "noc_triage_agent/agent.py", "line": 34, "end_line": 40, "label": "root_agent" }
+      ]
+    },
+    {
+      "id": "env", "type": "cloud", "icon": "none",
+      "label": "Environment config", "sublabel": "noc_triage_agent/.env", "tag": "git-ignored",
+      "pos": [640, 40], "size": [150, 70],
+      "sources": [
+        { "path": ".env.example", "line": 1, "end_line": 16, "label": "variables" },
+        { "path": "noc_triage_agent/config.py", "line": 10, "end_line": 13, "label": "env reads" }
+      ]
+    },
+    {
+      "id": "data", "type": "backend", "icon": "database",
+      "label": "Bundled data files", "sublabel": "CSV + tickets JSON", "tag": "read-only",
+      "pos": [640, 340], "size": [150, 70],
+      "sources": [
+        { "path": "noc_triage_agent/repository.py", "line": 11, "label": "DATA_DIR" },
+        { "path": "specs/02-design.md", "line": 49, "label": "data inside package" }
+      ]
+    },
+    {
+      "id": "dash", "type": "frontend",
+      "label": "FastAPI dashboard", "sublabel": "ui/app.py, port 8501", "tag": "local only",
+      "pos": [340, 340], "size": [150, 70],
+      "sources": [
+        { "path": "ui/app.py", "line": 8, "end_line": 11, "label": "usage" },
+        { "path": "ui/app.py", "line": 152, "end_line": 153, "label": "uvicorn run" }
+      ]
+    },
+    {
+      "id": "gemini", "type": "external", "icon": "cloud",
+      "label": "Gemini model API", "sublabel": "API key or Vertex AI", "tag": "external service",
+      "pos": [940, 190], "size": [150, 70],
+      "sources": [
+        { "path": "specs/02-design.md", "line": 165, "end_line": 170, "label": "config table" },
+        { "path": "specs/02-design.md", "line": 185, "end_line": 186, "label": "model + access notes" }
+      ]
+    },
+    {
+      "id": "deploycli", "type": "external",
+      "label": "adk deploy", "sublabel": "CLI, never run", "tag": "T11 / T13 open",
+      "pos": [340, 600], "size": [150, 70],
+      "sources": [
+        { "path": "specs/05-deploy.md", "line": 25, "end_line": 33, "label": "Option A command" },
+        { "path": "specs/03-tasks.md", "line": 59, "end_line": 68, "label": "T11 to T13 unchecked" }
+      ]
+    },
+    {
+      "id": "runtime", "type": "security", "icon": "stop",
+      "label": "Agent Runtime", "sublabel": "PROPOSED target A", "tag": "not deployed",
+      "pos": [640, 520], "size": [150, 70],
+      "sources": [
+        { "path": "specs/05-deploy.md", "line": 25, "end_line": 38, "label": "Option A" }
+      ]
+    },
+    {
+      "id": "cloudrun", "type": "security", "icon": "stop",
+      "label": "Cloud Run", "sublabel": "PROPOSED target B", "tag": "not deployed",
+      "pos": [640, 680], "size": [150, 70],
+      "sources": [
+        { "path": "specs/05-deploy.md", "line": 40, "end_line": 54, "label": "Option B" }
+      ]
+    },
+    {
+      "id": "vertex", "type": "security", "icon": "stop",
+      "label": "Vertex AI models", "sublabel": "PROPOSED model access", "tag": "404 in this project",
+      "pos": [940, 600], "size": [150, 70],
+      "sources": [
+        { "path": "specs/02-design.md", "line": 186, "label": "404 note" }
+      ]
+    }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Developer machine (implemented)", "wraps": ["developer", "adkweb", "sessions", "agentpkg", "env", "data", "dash"] },
+    { "kind": "region", "label": "Google Cloud (proposed, nothing deployed)", "wraps": ["runtime", "cloudrun", "vertex"] }
+  ],
+  "connections": [
+    { "id": "d1", "from": "developer", "to": "adkweb", "label": "uv run adk web", "variant": "emphasis" },
+    { "id": "d2", "from": "adkweb", "to": "agentpkg", "label": "loads root_agent", "variant": "emphasis" },
+    { "id": "d3", "from": "adkweb", "to": "sessions", "label": "sessions + events" },
+    { "id": "d4", "from": "env", "to": "agentpkg", "label": "model + project vars" },
+    { "id": "d5", "from": "agentpkg", "to": "data", "label": "tools read files" },
+    { "id": "d6", "from": "dash", "to": "data", "label": "same tools, no LLM" },
+    { "id": "d7", "from": "agentpkg", "to": "gemini", "label": "LLM calls", "variant": "emphasis" },
+    { "id": "d8", "from": "deploycli", "to": "runtime", "label": "agent_engine", "variant": "dashed" },
+    { "id": "d9", "from": "deploycli", "to": "cloudrun", "label": "cloud_run", "variant": "dashed" },
+    { "id": "d10", "from": "runtime", "to": "vertex", "label": "model calls", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Local path (implemented)",
+      "items": [
+        "adk web and adk run load the package and call the model API using env settings",
+        "Tickets are in session state; the dev server keeps sessions in local SQLite",
+        "Custom dashboard on 127.0.0.1:8501 calls the tools directly"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Cloud path (not implemented)",
+      "items": [
+        "Agent Runtime: managed sessions, scaling, tracing (specs/05-deploy.md)",
+        "Cloud Run: container alternative with optional UI",
+        "Needs project, bucket and permissions; sessions would leave local SQLite"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Implementation gaps",
+      "items": [
+        "No deploy/ folder, smoke test script, Dockerfile or requirements.txt",
+        "Design says Vertex AI; development actually used an API key",
+        "Logging: only config.py logs the model choice and a project warning"
+      ]
+    }
+  ]
+}
+

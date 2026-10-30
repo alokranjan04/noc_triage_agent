@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "e3ea407c-f767-48e1-9cc9-f7082b6e6df3",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\sequence-1-request-to-kpis.json",
+  "output": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\sequence-1-request-to-kpis.html",
+  "specification": {
+    "sha256": "4474c759fe21116a459fb763b926d3eb36f7e887b5c91698adc2780a568b583a",
+    "bytes": 4630
+  },
+  "artifact": {
+    "sha256": "cb2ea222b4823a2c6a2029ab3dbf2897fe70ea1005dfbbd7bfe9d83ed124e674",
+    "bytes": 821594
+  }
+}
