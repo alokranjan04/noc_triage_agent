@@ -7,3 +7,5 @@ __pycache__/
 .adk/
 .pytest_cache/
 .ruff_cache/
+*.json.key
+gha-key.json
