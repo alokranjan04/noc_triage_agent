@@ -28,9 +28,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Debug — confirm job starts
-        run: echo "Deploy job started at $(date)"
-
       - uses: actions/checkout@v4
 
       - name: Authenticate to Google Cloud
@@ -40,9 +37,6 @@ jobs:
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
-
-      - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
       - name: Create .env for deployment
         run: |
@@ -54,18 +48,10 @@ jobs:
             "GOOGLE_CLOUD_LOCATION=us-central1" \
             > noc_triage_agent/.env
 
-      - name: Build and push Docker image
-        run: |
-          IMAGE="us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/noc-triage-agent"
-          docker build -t "${IMAGE}:${{ github.sha }}" -t "${IMAGE}:latest" .
-          docker push "${IMAGE}:${{ github.sha }}"
-          docker push "${IMAGE}:latest"
-          echo "IMAGE=${IMAGE}" >> "$GITHUB_ENV"
-
-      - name: Deploy to Cloud Run
+      - name: Deploy to Cloud Run (source-based)
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image="${{ env.IMAGE }}:${{ github.sha }}" \
+            --source=. \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=${{ env.GCP_REGION }} \
             --platform=managed \
