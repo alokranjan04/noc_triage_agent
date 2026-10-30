@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "b54edfb6-f9a5-4e51-8e70-9fad6276efc1",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\.archify\\architecture-noc-orchestration-20261030-180000\\candidate.json",
+  "output": "C:\\Users\\Alok Ranjan\\Documents\\noc-triage-agent\\docs\\architecture\\diagrams\\orchestration-patterns-a2a.html",
+  "specification": {
+    "sha256": "c09fa408260ba88bbbbe9b40b0faf496a7a52865a8faa7bbbd335dc8fb018aa9",
+    "bytes": 11551
+  },
+  "artifact": {
+    "sha256": "a7c9582deafb61b5764b282205c78f269088f42e941d3506ddc9a909e793fe5e",
+    "bytes": 851026
+  }
+}
