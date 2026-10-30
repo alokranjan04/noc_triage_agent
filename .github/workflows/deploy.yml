@@ -26,20 +26,9 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    environment: noc_secrets
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Debug — verify secrets are available
-        run: |
-          echo "GCP_PROJECT_ID length: ${#GCP_PROJECT_ID}"
-          echo "GCP_SA_KEY length: ${#GCP_SA_KEY}"
-          echo "OPEN_ROUTER_KEY length: ${#OPEN_ROUTER_KEY}"
-        env:
-          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-          OPEN_ROUTER_KEY: ${{ secrets.OPEN_ROUTER_KEY }}
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
