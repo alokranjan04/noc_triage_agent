@@ -103,13 +103,13 @@ def main() -> None:
         # Build output for saving
         output_lines = [
             "Remote Smoke Test — Agent Runtime",
-            f"Date: 2026-10-30",
+            "Date: 2026-10-30",
             f"Resource: {RESOURCE_NAME}",
-            f"Model: gemini-3.8-flash via Vertex AI (global endpoint)",
+            "Model: gemini-3.8-flash via Vertex AI (global endpoint)",
             "",
             'Prompt: "Triage CELL-1002."',
             "",
-            f"Final response:",
+            "Final response:",
             f"  {final_text!r}",
             "",
         ]
@@ -146,7 +146,7 @@ def main() -> None:
             print("\nSmoke test FAILED — see response above.")
             sys.exit(1)
 
-    except Exception as exc:
+    except (OSError, ValueError, KeyError) as exc:
         error_msg = f"Agent Runtime query failed: {exc}"
         print(f"\n{error_msg}")
 
