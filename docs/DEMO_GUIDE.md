@@ -24,6 +24,10 @@ A step-by-step guide for demonstrating all features of the NOC Triage Agent. Use
 
 ## Pre-Demo Setup
 
+**Live Dashboard (deployed):** https://noc-triage-agent-536573436709.us-central1.run.app/
+
+Or run locally:
+
 ```bash
 # Terminal 1 — Ensure everything is installed
 cd noc-triage-agent
@@ -117,7 +121,7 @@ uv run pytest -q
 
 ## Section 3: Custom Dashboard UI (3 min)
 
-### Open `http://localhost:8501`
+### Open https://noc-triage-agent-536573436709.us-central1.run.app/
 
 ### Walk Through Each Section
 
@@ -436,7 +440,7 @@ Use the chat pane on the right side of the dashboard, or the ADK web UI.
 
 ## Section 8: ADK Dev UI (2 min)
 
-### Open `http://localhost:8000`
+### Open ADK Dev UI (local only: `http://localhost:8000`)
 
 1. Select **noc_triage_agent** from the dropdown
 2. Type: `Triage CELL-1004.`
@@ -471,7 +475,7 @@ Open `evals/cases.yaml` and scroll through the categories:
 
 ### 9b. Run Live Eval from Dashboard
 
-1. Open the dashboard at `http://localhost:8501` (or the Cloud Run URL)
+1. Open the dashboard at https://noc-triage-agent-536573436709.us-central1.run.app/
 2. Scroll to the **Live Eval Runner** section
 3. Click **Run All Cases** — results stream in live, one per case
 4. Each case shows pass/fail, tools called, and response excerpt
