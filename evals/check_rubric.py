@@ -237,7 +237,7 @@ def main() -> None:
         try:
             response, tools_called = run_case(case)
             passed, reasons = check_case(case, response, tools_called)
-        except Exception as exc:
+        except (ValueError, KeyError, OSError) as exc:
             passed = False
             reasons = [f"ERROR: {exc}"]
             response = ""

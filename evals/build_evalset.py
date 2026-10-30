@@ -25,7 +25,7 @@ OUTPUT_PATH = REPO_ROOT / "evals" / "noc_triage.evalset.json"
 def _known_tool_names() -> set[str]:
     """Return the set of tool function names registered on root_agent."""
     sys.path.insert(0, str(REPO_ROOT))
-    from noc_triage_agent.agent import root_agent  # noqa: PLC0415
+    from noc_triage_agent.agent import root_agent
 
     names: set[str] = set()
     for tool in root_agent.tools:

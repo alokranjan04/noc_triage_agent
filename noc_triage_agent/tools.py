@@ -6,8 +6,14 @@ import re
 from typing import Any
 
 from .repository import CsvKpiRepository, TicketStore
-from .rules import CELL_ID_PATTERN, build_summary, find_breaches, is_priority_justified, suggested_priority, ticket_id_for
-
+from .rules import (
+    CELL_ID_PATTERN,
+    build_summary,
+    find_breaches,
+    is_priority_justified,
+    suggested_priority,
+    ticket_id_for,
+)
 
 CELL_ID_RE = re.compile(CELL_ID_PATTERN)
 

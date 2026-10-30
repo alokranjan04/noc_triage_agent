@@ -57,9 +57,7 @@ def is_priority_justified(priority: str, kpis: dict[str, float]) -> bool:
         return float(kpis.get("availability_pct", 100.0)) < P1_AVAILABILITY_BELOW
     if priority_name == "P2":
         return bool(find_breaches(kpis))
-    if priority_name == "P3":
-        return True
-    return False
+    return priority_name == "P3"
 
 
 def ticket_id_for(cell_id: str) -> str:

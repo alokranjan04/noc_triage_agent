@@ -1,6 +1,5 @@
 """Tests for KPI repository and session-scoped ticket tracking. Covers REQ-1.1, 1.3, 3.4, 3.7."""
 
-from pathlib import Path
 
 from noc_triage_agent.repository import CsvKpiRepository, TicketStore
 

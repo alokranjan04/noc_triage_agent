@@ -7,7 +7,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 DATA_DIR = Path(__file__).resolve().parent / "data"
 
 
@@ -31,12 +30,12 @@ class CsvKpiRepository(KpiRepository):
             records: list[dict[str, Any]] = []
             for row in reader:
                 normalized = dict(row)
-                for key in {
+                for key in (
                     "drop_call_rate_pct",
                     "prb_utilization_pct",
                     "availability_pct",
                     "avg_throughput_mbps",
-                }:
+                ):
                     if key in normalized:
                         normalized[key] = float(normalized[key])
                 records.append(normalized)

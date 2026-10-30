@@ -16,13 +16,12 @@ import asyncio
 import json
 import os
 import sys
-import traceback
 from pathlib import Path
 from typing import Any
 
+import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
-import uvicorn
 
 # Add project root to path so we can import the agent package.
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -41,8 +40,7 @@ for _env_path in [PROJECT_ROOT / ".env", PROJECT_ROOT / "noc_triage_agent" / ".e
                 os.environ[key] = value
 
 from noc_triage_agent.repository import CsvKpiRepository, TicketStore
-from noc_triage_agent.rules import find_breaches, suggested_priority
-from noc_triage_agent.tools import get_cell_kpis, create_ticket
+from noc_triage_agent.tools import create_ticket, get_cell_kpis
 
 app = FastAPI(title="NOC Triage Agent Dashboard")
 
@@ -162,7 +160,7 @@ def api_eval_results() -> JSONResponse:
     """Return eval case metadata + scores + golden dataset details."""
     try:
         raw = yaml.safe_load(CASES_PATH.read_text(encoding="utf-8"))
-    except Exception:
+    except (OSError, yaml.YAMLError):
         return JSONResponse([])
 
     results = []
@@ -338,7 +336,7 @@ async def api_chat(request: Request) -> JSONResponse:
 
         return JSONResponse({"status": "ok", "reply": "(Agent reached max tool-call rounds)"})
 
-    except Exception as exc:
+    except (ValueError, KeyError, OSError) as exc:
         return JSONResponse({
             "status": "error",
             "reply": f"Chat error: {exc}",
