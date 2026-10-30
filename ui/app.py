@@ -116,6 +116,19 @@ import yaml
 
 CASES_PATH = PROJECT_ROOT / "evals" / "cases.yaml"
 
+
+def _load_cases_from_yaml() -> list[dict[str, Any]]:
+    """Load cases from the YAML file."""
+    try:
+        raw = yaml.safe_load(CASES_PATH.read_text(encoding="utf-8"))
+        return raw.get("cases", [])
+    except (OSError, yaml.YAMLError):
+        return []
+
+
+# In-memory editable cases (initialised from cases.yaml on startup).
+_editable_cases: list[dict[str, Any]] = _load_cases_from_yaml()
+
 # Hardcoded from the last passing eval run (run 4, 2026-10-30).
 _EVAL_SCORES: dict[str, dict[str, float]] = {
     "c01_healthy_cell":              {"trajectory": 1.0, "response": 0.714},
@@ -188,6 +201,71 @@ def api_eval_results() -> JSONResponse:
             "safety": is_safety,
         })
     return JSONResponse(results)
+
+
+# ---------------------------------------------------------------------------
+# Editable eval cases CRUD
+# ---------------------------------------------------------------------------
+
+@app.get("/api/evals/cases")
+def api_get_cases() -> JSONResponse:
+    """Return the current editable cases list."""
+    return JSONResponse(_editable_cases)
+
+
+@app.put("/api/evals/cases")
+async def api_set_cases(request: Request) -> JSONResponse:
+    """Replace the entire cases list."""
+    global _editable_cases
+    body = await request.json()
+    cases = body if isinstance(body, list) else body.get("cases", [])
+    _editable_cases = cases
+    return JSONResponse({"status": "ok", "count": len(_editable_cases)})
+
+
+@app.post("/api/evals/cases")
+async def api_add_case(request: Request) -> JSONResponse:
+    """Add a single case to the list."""
+    case = await request.json()
+    if not case.get("id") or not case.get("prompt"):
+        return JSONResponse({"status": "error", "message": "id and prompt are required"}, status_code=400)
+    # Prevent duplicate IDs.
+    existing_ids = {c["id"] for c in _editable_cases}
+    if case["id"] in existing_ids:
+        return JSONResponse({"status": "error", "message": f"Case {case['id']} already exists"}, status_code=409)
+    _editable_cases.append(case)
+    return JSONResponse({"status": "ok", "count": len(_editable_cases)})
+
+
+@app.put("/api/evals/cases/{case_id}")
+async def api_update_case(case_id: str, request: Request) -> JSONResponse:
+    """Update an existing case by ID."""
+    case = await request.json()
+    for i, c in enumerate(_editable_cases):
+        if c["id"] == case_id:
+            case["id"] = case_id  # Prevent ID change.
+            _editable_cases[i] = case
+            return JSONResponse({"status": "ok"})
+    return JSONResponse({"status": "error", "message": "Case not found"}, status_code=404)
+
+
+@app.delete("/api/evals/cases/{case_id}")
+def api_delete_case(case_id: str) -> JSONResponse:
+    """Delete a case by ID."""
+    global _editable_cases
+    before = len(_editable_cases)
+    _editable_cases = [c for c in _editable_cases if c["id"] != case_id]
+    if len(_editable_cases) == before:
+        return JSONResponse({"status": "error", "message": "Case not found"}, status_code=404)
+    return JSONResponse({"status": "ok", "count": len(_editable_cases)})
+
+
+@app.post("/api/evals/cases/reset")
+def api_reset_cases() -> JSONResponse:
+    """Reset cases back to the original cases.yaml."""
+    global _editable_cases
+    _editable_cases = _load_cases_from_yaml()
+    return JSONResponse({"status": "ok", "count": len(_editable_cases)})
 
 
 # ---------------------------------------------------------------------------
@@ -315,13 +393,11 @@ def _run_single_eval_case(case: dict, model: str) -> dict:
 
 @app.post("/api/evals/run")
 async def api_run_evals() -> StreamingResponse:
-    """Run all 15 eval cases and stream results as NDJSON."""
-    try:
-        raw = yaml.safe_load(CASES_PATH.read_text(encoding="utf-8"))
-    except (OSError, yaml.YAMLError):
-        return JSONResponse({"status": "error", "message": "Cannot load cases.yaml"})
+    """Run editable eval cases and stream results as NDJSON."""
+    cases = _editable_cases
+    if not cases:
+        return JSONResponse({"status": "error", "message": "No eval cases loaded"})
 
-    cases = raw.get("cases", [])
     model = OPENROUTER_MODEL
 
     async def generate():

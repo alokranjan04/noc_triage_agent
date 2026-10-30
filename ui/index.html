@@ -778,9 +778,71 @@ header .actions { display: flex; gap: .5rem; align-items: center; }
         <div class="eval-card"><div class="skeleton" style="height:120px"></div></div>
       </div>
 
-      <!-- Golden Dataset -->
-      <div class="section-title" style="margin-top:2.5rem">Golden Dataset</div>
+      <!-- Golden Dataset (Editable) -->
+      <div class="section-title" style="margin-top:2.5rem">
+        Golden Dataset
+        <button onclick="showAddCaseForm()" style="
+          margin-left:1rem; padding:.35rem 1rem; border-radius:var(--radius-sm);
+          background:var(--green); color:#fff; border:none;
+          font-size:.72rem; font-weight:600; cursor:pointer;
+        ">+ Add Case</button>
+        <button onclick="resetCases()" style="
+          margin-left:.5rem; padding:.35rem 1rem; border-radius:var(--radius-sm);
+          background:var(--bg-hover); color:var(--text-secondary); border:1px solid var(--border);
+          font-size:.72rem; font-weight:500; cursor:pointer;
+        ">Reset to Default</button>
+        <span id="caseCount" style="margin-left:.75rem; font-size:.72rem; color:var(--text-muted)"></span>
+      </div>
       <div class="gd-tabs" id="gdTabs"></div>
+
+      <!-- Add/Edit Case Form (hidden by default) -->
+      <div id="caseFormContainer" style="display:none; margin-bottom:1rem;">
+        <div style="background:var(--bg-card); border:1px solid var(--border-focus); border-radius:var(--radius); padding:1.25rem;">
+          <div style="font-weight:600; font-size:.9rem; margin-bottom:1rem;" id="caseFormTitle">Add New Case</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem;">
+            <div>
+              <label style="font-size:.72rem; color:var(--text-secondary); display:block; margin-bottom:.25rem">Case ID *</label>
+              <input id="cf_id" placeholder="c16_my_case" style="width:100%; padding:.45rem .6rem; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); font-family:var(--font-mono); font-size:.78rem;">
+            </div>
+            <div>
+              <label style="font-size:.72rem; color:var(--text-secondary); display:block; margin-bottom:.25rem">Category</label>
+              <select id="cf_category" style="width:100%; padding:.45rem .6rem; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); font-size:.78rem;">
+                <option value="happy_path">Happy Path</option>
+                <option value="guardrail">Guardrail</option>
+                <option value="intent">Intent Handling</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:.75rem">
+            <label style="font-size:.72rem; color:var(--text-secondary); display:block; margin-bottom:.25rem">Prompt *</label>
+            <textarea id="cf_prompt" rows="2" placeholder='Triage CELL-1002.' style="width:100%; padding:.45rem .6rem; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); font-size:.78rem; resize:vertical; font-family:var(--font);"></textarea>
+          </div>
+          <div style="margin-top:.75rem">
+            <label style="font-size:.72rem; color:var(--text-secondary); display:block; margin-bottom:.25rem">Reference Response</label>
+            <textarea id="cf_ref" rows="2" placeholder="Expected agent response..." style="width:100%; padding:.45rem .6rem; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); font-size:.78rem; resize:vertical; font-family:var(--font);"></textarea>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-top:.75rem;">
+            <div>
+              <label style="font-size:.72rem; color:var(--text-secondary); display:block; margin-bottom:.25rem">Must Include (comma-separated)</label>
+              <input id="cf_must_include" placeholder='TCK-1002, P2, 3.4' style="width:100%; padding:.45rem .6rem; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); font-size:.78rem; font-family:var(--font-mono);">
+            </div>
+            <div>
+              <label style="font-size:.72rem; color:var(--text-secondary); display:block; margin-bottom:.25rem">Must NOT Include (comma-separated)</label>
+              <input id="cf_must_not_include" placeholder='P1, TCK-' style="width:100%; padding:.45rem .6rem; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); font-size:.78rem; font-family:var(--font-mono);">
+            </div>
+          </div>
+          <div style="margin-top:.75rem">
+            <label style="font-size:.72rem; color:var(--text-secondary); display:block; margin-bottom:.25rem">Expected Tools (JSON array, optional)</label>
+            <input id="cf_tools" placeholder='[{"name":"get_cell_kpis","args":{"cell_id":"CELL-1002"}}]' style="width:100%; padding:.45rem .6rem; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); font-size:.78rem; font-family:var(--font-mono);">
+          </div>
+          <div style="display:flex; gap:.5rem; margin-top:1rem;">
+            <button onclick="saveCaseForm()" style="padding:.4rem 1.2rem; border-radius:var(--radius-sm); background:var(--accent-dim); color:#fff; border:1px solid var(--accent); font-size:.78rem; font-weight:600; cursor:pointer;">Save</button>
+            <button onclick="hideCaseForm()" style="padding:.4rem 1.2rem; border-radius:var(--radius-sm); background:var(--bg-hover); color:var(--text-secondary); border:1px solid var(--border); font-size:.78rem; cursor:pointer;">Cancel</button>
+            <span id="caseFormError" style="color:var(--red); font-size:.72rem; align-self:center"></span>
+          </div>
+        </div>
+      </div>
+
       <div id="gdCards">
         <div class="gd-card"><div class="skeleton" style="height:80px"></div></div>
         <div class="gd-card"><div class="skeleton" style="height:80px"></div></div>
@@ -793,7 +855,7 @@ header .actions { display: flex; gap: .5rem; align-items: center; }
           margin-left:1rem; padding:.4rem 1.2rem; border-radius:var(--radius-sm);
           background:var(--accent-dim); color:#fff; border:1px solid var(--accent);
           font-size:.78rem; font-weight:600; cursor:pointer; transition:var(--transition);
-        ">Run All 15 Cases</button>
+        ">Run All Cases</button>
         <span id="evalRunStatus" style="margin-left:.75rem; font-size:.78rem; color:var(--text-secondary)"></span>
       </div>
       <div id="evalRunSummary" style="margin-bottom:.75rem"></div>
@@ -1194,10 +1256,11 @@ function renderEvalGrid(evals) {
 }
 
 // =======================================================================
-//  Golden Dataset
+//  Golden Dataset (Editable)
 // =======================================================================
 let _gdData = [];
 let _gdFilter = 'all';
+let _editingCaseId = null; // null = add mode, string = edit mode
 
 const _catLabels = {
   all:        'All',
@@ -1208,7 +1271,8 @@ const _catLabels = {
 
 async function loadGoldenDataset() {
   try {
-    _gdData = await fetchJSON('/api/evals');
+    _gdData = await fetchJSON('/api/evals/cases');
+    document.getElementById('caseCount').textContent = `${_gdData.length} cases`;
     renderGoldenTabs();
     renderGoldenCards();
   } catch (e) {
@@ -1218,7 +1282,10 @@ async function loadGoldenDataset() {
 
 function renderGoldenTabs() {
   const counts = { all: _gdData.length, happy_path: 0, guardrail: 0, intent: 0 };
-  _gdData.forEach(c => { if (counts[c.category] !== undefined) counts[c.category]++; });
+  _gdData.forEach(c => {
+    const cat = c.category || 'other';
+    if (counts[cat] !== undefined) counts[cat]++;
+  });
 
   document.getElementById('gdTabs').innerHTML = Object.entries(_catLabels).map(([key, label]) => `
     <button class="gd-tab ${_gdFilter === key ? 'active' : ''}" onclick="setGdFilter('${key}')">
@@ -1234,27 +1301,29 @@ function setGdFilter(cat) {
 }
 
 function renderGoldenCards() {
-  const filtered = _gdFilter === 'all' ? _gdData : _gdData.filter(c => c.category === _gdFilter);
+  const filtered = _gdFilter === 'all' ? _gdData : _gdData.filter(c => (c.category || 'other') === _gdFilter);
   const container = document.getElementById('gdCards');
 
   container.innerHTML = filtered.map((c, i) => {
     const num = String(i + 1).padStart(2, '0');
-    const catClass = c.category === 'happy_path' ? 'healthy' : c.category === 'guardrail' ? 'p2' : 'p3';
-    const catLabel = _catLabels[c.category] || c.category;
+    const cat = c.category || 'other';
+    const catClass = cat === 'happy_path' ? 'healthy' : cat === 'guardrail' ? 'p2' : 'p3';
+    const catLabel = _catLabels[cat] || cat;
 
     // Tool steps
-    const toolsHtml = (c.expected_tools_detail || []).map((t, ti) => {
+    const tools = c.expected_tools || [];
+    const toolsHtml = tools.map((t, ti) => {
       const argsStr = t.args ? Object.entries(t.args).map(([k,v]) => `${k}=${v}`).join(', ') : '';
       return `<div class="tool-step">
         <span style="color:var(--text-muted);font-size:.7rem;margin-right:.4rem">${ti+1}.</span>
         <span style="color:var(--accent);font-weight:600">${t.name}</span>${argsStr ? `<span class="tool-arrow">(</span>${argsStr}<span class="tool-arrow">)</span>` : ''}
       </div>`;
     }).join('');
-    const noTools = !c.expected_tools_detail?.length ? '<span style="color:var(--text-muted);font-style:italic">No tool calls expected</span>' : '';
+    const noTools = !tools.length ? '<span style="color:var(--text-muted);font-style:italic">No tool calls expected</span>' : '';
 
     // Assertions
-    const includeHtml = (c.must_include || []).map(p => `<span class="gd-assert include">✓ ${escapeHTML(p)}</span>`).join('');
-    const excludeHtml = (c.must_not_include || []).map(p => `<span class="gd-assert exclude">✗ ${escapeHTML(p)}</span>`).join('');
+    const includeHtml = (c.must_include || []).map(p => `<span class="gd-assert include">${escapeHTML(p)}</span>`).join('');
+    const excludeHtml = (c.must_not_include || []).map(p => `<span class="gd-assert exclude">${escapeHTML(p)}</span>`).join('');
     const assertionsHtml = (includeHtml || excludeHtml) ? `
       <div class="gd-field">
         <div class="gd-field-label">Assertions</div>
@@ -1270,13 +1339,14 @@ function renderGoldenCards() {
         <div class="gd-card-left">
           <div class="gd-card-num">${num}</div>
           <div>
-            <div style="font-weight:600;font-size:.88rem">${c.id}</div>
+            <div style="font-weight:600;font-size:.88rem">${escapeHTML(c.id)}</div>
             <div class="gd-card-prompt">"${escapeHTML(c.prompt)}"</div>
           </div>
         </div>
         <div class="gd-card-right">
           <span class="badge ${catClass}" style="font-size:.62rem">${catLabel}</span>
-          ${c.safety ? '<span class="badge p1" style="font-size:.6rem">SAFETY</span>' : ''}
+          <button onclick="event.stopPropagation(); editCase('${c.id}')" style="padding:.2rem .5rem; border-radius:4px; background:var(--bg-hover); border:1px solid var(--border); color:var(--accent); font-size:.62rem; cursor:pointer;">Edit</button>
+          <button onclick="event.stopPropagation(); deleteCase('${c.id}')" style="padding:.2rem .5rem; border-radius:4px; background:var(--bg-hover); border:1px solid var(--border); color:var(--red); font-size:.62rem; cursor:pointer;">Del</button>
           <span class="gd-card-chevron">▶</span>
         </div>
       </div>
@@ -1304,6 +1374,117 @@ function toggleGdCard(id) {
   document.getElementById('gd-' + id)?.classList.toggle('open');
 }
 
+// --- Case CRUD ---
+
+function showAddCaseForm() {
+  _editingCaseId = null;
+  document.getElementById('caseFormTitle').textContent = 'Add New Case';
+  document.getElementById('cf_id').value = '';
+  document.getElementById('cf_id').disabled = false;
+  document.getElementById('cf_category').value = 'happy_path';
+  document.getElementById('cf_prompt').value = '';
+  document.getElementById('cf_ref').value = '';
+  document.getElementById('cf_must_include').value = '';
+  document.getElementById('cf_must_not_include').value = '';
+  document.getElementById('cf_tools').value = '';
+  document.getElementById('caseFormError').textContent = '';
+  document.getElementById('caseFormContainer').style.display = 'block';
+  document.getElementById('cf_id').focus();
+}
+
+function editCase(caseId) {
+  const c = _gdData.find(x => x.id === caseId);
+  if (!c) return;
+  _editingCaseId = caseId;
+  document.getElementById('caseFormTitle').textContent = `Edit: ${caseId}`;
+  document.getElementById('cf_id').value = c.id;
+  document.getElementById('cf_id').disabled = true;
+  document.getElementById('cf_category').value = c.category || 'happy_path';
+  document.getElementById('cf_prompt').value = c.prompt || '';
+  document.getElementById('cf_ref').value = c.reference_response || '';
+  document.getElementById('cf_must_include').value = (c.must_include || []).join(', ');
+  document.getElementById('cf_must_not_include').value = (c.must_not_include || []).join(', ');
+  document.getElementById('cf_tools').value = c.expected_tools?.length ? JSON.stringify(c.expected_tools) : '';
+  document.getElementById('caseFormError').textContent = '';
+  document.getElementById('caseFormContainer').style.display = 'block';
+  document.getElementById('cf_prompt').focus();
+}
+
+function hideCaseForm() {
+  document.getElementById('caseFormContainer').style.display = 'none';
+  _editingCaseId = null;
+}
+
+function _parseCommaList(val) {
+  return val.split(',').map(s => s.trim()).filter(Boolean);
+}
+
+async function saveCaseForm() {
+  const id = document.getElementById('cf_id').value.trim();
+  const prompt = document.getElementById('cf_prompt').value.trim();
+  const errEl = document.getElementById('caseFormError');
+
+  if (!id || !prompt) { errEl.textContent = 'ID and Prompt are required'; return; }
+
+  let expectedTools = [];
+  const toolsVal = document.getElementById('cf_tools').value.trim();
+  if (toolsVal) {
+    try { expectedTools = JSON.parse(toolsVal); }
+    catch { errEl.textContent = 'Invalid JSON in Expected Tools'; return; }
+  }
+
+  const caseObj = {
+    id: id,
+    category: document.getElementById('cf_category').value,
+    prompt: prompt,
+    reference_response: document.getElementById('cf_ref').value.trim(),
+    must_include: _parseCommaList(document.getElementById('cf_must_include').value),
+    must_not_include: _parseCommaList(document.getElementById('cf_must_not_include').value),
+    expected_tools: expectedTools,
+    reqs: [],
+  };
+
+  try {
+    let resp;
+    if (_editingCaseId) {
+      resp = await fetch(`/api/evals/cases/${_editingCaseId}`, {
+        method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(caseObj)
+      });
+    } else {
+      resp = await fetch('/api/evals/cases', {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(caseObj)
+      });
+    }
+    const result = await resp.json();
+    if (result.status === 'error') { errEl.textContent = result.message; return; }
+
+    hideCaseForm();
+    await loadGoldenDataset();
+  } catch (e) {
+    errEl.textContent = `Error: ${e.message}`;
+  }
+}
+
+async function deleteCase(caseId) {
+  if (!confirm(`Delete case "${caseId}"?`)) return;
+  try {
+    await fetch(`/api/evals/cases/${caseId}`, { method: 'DELETE' });
+    await loadGoldenDataset();
+  } catch (e) {
+    console.error('Delete failed', e);
+  }
+}
+
+async function resetCases() {
+  if (!confirm('Reset all cases to the original cases.yaml? Custom cases will be lost.')) return;
+  try {
+    await fetch('/api/evals/cases/reset', { method: 'POST' });
+    await loadGoldenDataset();
+  } catch (e) {
+    console.error('Reset failed', e);
+  }
+}
+
 function escapeHTML(str) {
   const d = document.createElement('div');
   d.textContent = str;
@@ -1327,7 +1508,8 @@ async function runLiveEvals() {
   btn.disabled = true;
   btn.style.opacity = '0.5';
   btn.textContent = 'Running...';
-  status.textContent = 'Starting eval run...';
+  const totalCases = _gdData.length;
+  status.textContent = `Starting eval run (${totalCases} cases)...`;
   summary.innerHTML = '';
   container.innerHTML = '';
 
@@ -1352,7 +1534,7 @@ async function runLiveEvals() {
         try {
           const r = JSON.parse(line);
           results.push(r);
-          status.textContent = `Running: ${results.length}/15 complete...`;
+          status.textContent = `Running: ${results.length}/${totalCases} complete...`;
           renderEvalRunResult(container, r, results.length);
         } catch (e) { /* skip bad lines */ }
       }
@@ -1406,7 +1588,7 @@ async function runLiveEvals() {
 
   btn.disabled = false;
   btn.style.opacity = '1';
-  btn.textContent = 'Run All 15 Cases';
+  btn.textContent = 'Run All Cases';
   evalRunning = false;
 }
 
