@@ -1149,6 +1149,7 @@ async function sendChat() {
       addChatMsg(result.reply || 'Error from agent', 'error');
     }
     loadCells(); // refresh dashboard after agent action
+    loadTickets(); // show tickets created by agent chat
   } catch (e) {
     addChatMsg('Network error — is the server running?', 'error');
   } finally {
