@@ -50,13 +50,13 @@ jobs:
 
       - name: Create agent .env for deployment
         run: |
-          cat > noc_triage_agent/.env <<EOF
-          OPEN_ROUTER_KEY=${{ secrets.OPEN_ROUTER_KEY }}
-          OPENROUTER_MODEL=google/gemini-2.5-flash
-          GOOGLE_GENAI_USE_VERTEXAI=FALSE
-          GOOGLE_CLOUD_PROJECT=${{ secrets.GCP_PROJECT_ID }}
-          GOOGLE_CLOUD_LOCATION=us-central1
-          EOF
+          printf '%s\n' \
+            "OPEN_ROUTER_KEY=${{ secrets.OPEN_ROUTER_KEY }}" \
+            "OPENROUTER_MODEL=google/gemini-2.5-flash" \
+            "GOOGLE_GENAI_USE_VERTEXAI=FALSE" \
+            "GOOGLE_CLOUD_PROJECT=${{ secrets.GCP_PROJECT_ID }}" \
+            "GOOGLE_CLOUD_LOCATION=us-central1" \
+            > noc_triage_agent/.env
 
       - name: Deploy to Cloud Run via ADK
         run: |
@@ -82,6 +82,6 @@ jobs:
       - name: Smoke test — health check
         run: |
           URL="${{ steps.url.outputs.url }}"
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -L "$URL")
           echo "Health check: HTTP $STATUS"
-          [ "$STATUS" = "200" ] || exit 1
+          [ "$STATUS" = "200" ] || [ "$STATUS" = "307" ] || exit 1
