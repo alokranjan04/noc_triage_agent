@@ -1,12 +1,7 @@
 name: Deploy to Cloud Run
 
 on:
-  workflow_dispatch:  # Manual trigger from GitHub UI
-  push:
-    branches: [main]
-    paths:
-      - "noc_triage_agent/**"
-      - ".github/workflows/deploy.yml"
+  workflow_dispatch:  # Manual trigger only — go to Actions tab → Run workflow
 
 env:
   GCP_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
@@ -28,9 +23,10 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
+    environment: noc_secrets
     permissions:
       contents: read
-      id-token: write  # Required for Workload Identity Federation
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -54,13 +50,13 @@ jobs:
 
       - name: Create agent .env for deployment
         run: |
-          cat > noc_triage_agent/.env << 'ENVEOF'
+          cat > noc_triage_agent/.env <<EOF
           OPEN_ROUTER_KEY=${{ secrets.OPEN_ROUTER_KEY }}
           OPENROUTER_MODEL=google/gemini-2.5-flash
           GOOGLE_GENAI_USE_VERTEXAI=FALSE
           GOOGLE_CLOUD_PROJECT=${{ secrets.GCP_PROJECT_ID }}
           GOOGLE_CLOUD_LOCATION=us-central1
-          ENVEOF
+          EOF
 
       - name: Deploy to Cloud Run via ADK
         run: |
