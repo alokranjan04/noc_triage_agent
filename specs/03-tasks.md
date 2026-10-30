@@ -56,15 +56,15 @@ Tasks marked `[needs-approval]` require the human to approve the plan before cod
 
 ## Phase 3 — Deploy (plan day 8, part 2)
 
-- [ ] **T11. Deploy to Agent Runtime** `[needs-approval]` — REQ-6.4
+- [x] **T11. Deploy to Agent Runtime** `[needs-approval]` — REQ-6.4 — done 2026-10-30
   - Follow `specs/05-deploy.md` Option A. Save the resource name to `deploy/agent_runtime.txt`.
   - **Done when:** deployment succeeds and the resource is visible in the console.
 
-- [ ] **T12. Remote smoke test**
+- [x] **T12. Remote smoke test** — done 2026-10-30
   - `deploy/smoke_agent_runtime.py` per `05-deploy.md`.
   - **Done when:** "Triage CELL-1002." returns a TCK-1002 P2 answer from the deployed agent; output saved to `docs/remote_smoke.txt`.
 
-- [ ] **T13. (Optional) Deploy to Cloud Run** `[needs-approval]`
+- [x] **T13. (Optional) Deploy to Cloud Run** `[needs-approval]` — done 2026-10-30
   - Option B in `05-deploy.md`; authenticated proxy; screenshot of the deployed UI.
 
 - [x] **T14. README and cleanup** — REQ-6.5 — done 2026-10-30
@@ -84,6 +84,9 @@ The `gen-lang-client-0817580282` API key returned 503 UNAVAILABLE on c06's first
 Project `ai-voice-agent-c2a2b` returns 404 for all Gemini models (`gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-1.5-flash`) in `us-central1`. The agent code is correct and all 19 unit tests pass. To unblock the smoke test, either:
 - **Option A (Vertex AI):** In Cloud Console → Vertex AI → enable the API, then verify the model name under "Model Garden".
 - **Option B (Gemini API key):** Add `GOOGLE_API_KEY=<key>` and set `GOOGLE_GENAI_USE_VERTEXAI=FALSE` in `noc_triage_agent/.env`.
+
+### F4 — T11 Vertex AI regional endpoints return 404, global endpoint works (fixed 2026-10-30)
+All Gemini models (`gemini-3.8-flash`, `gemini-2.5-flash`, etc.) return 404 via regional Vertex AI endpoints (`us-central1-aiplatform.googleapis.com`) for project `ai-voice-agent-c2a2b`, but work via the global endpoint (`aiplatform.googleapis.com`). The Agent Runtime Dockerfile hardcodes `GOOGLE_CLOUD_LOCATION=us-central1`, causing model calls to fail. Fixed by using `Gemini(model=..., client_kwargs={"location": "global"})` in `config.py` to force the global endpoint for Vertex AI model calls. Also updated fallback model from deprecated `gemini-2.5-flash` to `gemini-3.8-flash`.
 
 ## Eval run log
 | Run | Date | Model | Trajectory | Response | Change made |

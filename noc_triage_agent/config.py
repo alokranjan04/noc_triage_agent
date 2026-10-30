@@ -29,14 +29,21 @@ MODEL: Any  # str for Gemini, LiteLlm instance for OpenRouter
 if OPEN_ROUTER_KEY:
     from google.adk.models.lite_llm import LiteLlm
 
-    _or_model = os.getenv("OPENROUTER_MODEL", "openrouter/google/gemini-2.5-flash")
+    _or_model = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
+    # LiteLLM requires the openrouter/ prefix for routing.
+    if not _or_model.startswith("openrouter/"):
+        _or_model = f"openrouter/{_or_model}"
     MODEL = LiteLlm(model=_or_model)
     logger.info("Using OpenRouter model %s via LiteLlm", _or_model)
 else:
-    _MODEL_NAME = os.getenv("NOC_AGENT_MODEL", "gemini-2.5-flash")
-    MODEL = _MODEL_NAME
+    from google.adk.models.google_llm import Gemini
+
+    _MODEL_NAME = os.getenv("NOC_AGENT_MODEL", "gemini-3.8-flash")
+    # Use the global endpoint because regional endpoints may not have model
+    # access enabled for all projects.
+    MODEL = Gemini(model=_MODEL_NAME, client_kwargs={"location": "global"})
     logger.warning(
-        "OPEN_ROUTER_KEY not set; falling back to Google GenAI model %s. "
+        "OPEN_ROUTER_KEY not set; falling back to Vertex AI model %s (global). "
         "Set OPEN_ROUTER_KEY for cheaper inference via OpenRouter.",
-        MODEL,
+        _MODEL_NAME,
     )

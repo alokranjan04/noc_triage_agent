@@ -1,0 +1,16 @@
+Remote Smoke Test — Agent Runtime
+Date: 2026-10-30
+Resource: projects/536573436709/locations/us-central1/reasoningEngines/1113913305954516992
+Model: gemini-3.8-flash via Vertex AI (global endpoint)
+
+Prompt: "Triage CELL-1002."
+
+Final response:
+  'Cell CELL-1002 is breaching.\n\nBreaches detected:\n- drop_call_rate_pct 3.4 vs threshold 2\n\nAction taken: Created ticket TCK-1002 with priority P2.'
+
+Checks:
+  TCK-1002: PASS
+  P2: PASS
+  CELL-1002: PASS
+
+Result: SMOKE TEST PASSED
